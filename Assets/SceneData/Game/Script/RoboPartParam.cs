@@ -15,10 +15,8 @@
     {
       Head,
       Leg,
-      Body,
       Wepon,
-      LeftArm,
-      RightArm,
+      Accessory
     }
 
     //パーツ属性　基本脚部に使う
@@ -29,6 +27,10 @@
       None,
       Air,
       Land,
+
+      Bullet,
+      Explosion,
+      Laser
     }
 
     [SerializeField]
@@ -53,6 +55,10 @@
     int load;//荷重
     [SerializeField]
     int weight;//重さ
+    [SerializeField]
+    int shotSpd;//弾の速さ
+    [SerializeField]
+    float[] regist = new float[3];//耐性
     [SerializeField]
     int fov;//視野　ロボからの視界半径とする？
 
