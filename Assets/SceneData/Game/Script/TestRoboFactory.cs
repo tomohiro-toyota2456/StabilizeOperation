@@ -13,14 +13,17 @@ public class TestRoboFactory : MonoBehaviour
   [SerializeField]
   GameObject roboBase;
   [SerializeField]
-  Test test;
+  Game.GameTouchAction touchAction;
   [SerializeField]
   Camera camera;
   List<GameObject> objList = new List<GameObject>();
 
+  List<GameObject> selectList;
+
   private void Start()
   {
-    test.del = Select;
+    touchAction.EndDragDel = Select;
+    touchAction.TouchDel = MovePoint;
   }
 
   public void CreateRobo()
@@ -41,7 +44,7 @@ public class TestRoboFactory : MonoBehaviour
     obj2.transform.localPosition = new Vector3(0, 0, 0);
     obj3.transform.localPosition = new Vector3(0, 0, 0);
 
-    objList.Add(obj);
+    objList.Add(rbase);
 
   }
 
@@ -52,18 +55,39 @@ public class TestRoboFactory : MonoBehaviour
     return obj;
   }
 
-  public void Select(Vector3 posSt,Vector3 posEd)
+  public void Select(Vector2 posSt,Vector2 posEd)
   {
+    selectList = new List<GameObject>();
     for(int i = 0; i < objList.Count;i++)
     {
       if(CheckHit(camera.WorldToScreenPoint(objList[i].transform.position),posSt,posEd))
       {
-        Debug.Log("Hit");
+        selectList.Add(objList[i]);
       }
     }
   }
 
-  bool CheckHit(Vector3 pos,Vector3 st,Vector3 ed)
+  public void MovePoint(Vector2 _pos)
+  {
+    if(selectList == null)
+    {
+      return;
+    }
+
+    RaycastHit hit;
+
+    if (Physics.Raycast(Camera.main.ScreenPointToRay(_pos), out hit, 1000))
+    {
+     
+    }
+
+      for (int i = 0; i < selectList.Count; i++)
+    {
+      selectList[i].GetComponent<RoboController>().SetTargetPos(hit.point);
+    }
+  }
+
+  bool CheckHit(Vector2 pos,Vector2 st,Vector2 ed)
   {
     if(pos.x > st.x && pos.x < ed.x)
     {

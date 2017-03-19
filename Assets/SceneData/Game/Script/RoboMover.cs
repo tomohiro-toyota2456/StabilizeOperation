@@ -29,7 +29,6 @@
           .Subscribe(_ =>
           {
             rbody.velocity = roboParam.CurSpd.Value * _;
-            Debug.Log(_);
           });
       }
     }
