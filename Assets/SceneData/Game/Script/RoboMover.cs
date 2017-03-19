@@ -28,6 +28,10 @@
           ob
           .Subscribe(_ =>
           {
+            if (_.magnitude != 0)
+            {
+              transform.rotation = Quaternion.LookRotation(_);
+            }
             rbody.velocity = roboParam.CurSpd.Value * _;
           });
       }
