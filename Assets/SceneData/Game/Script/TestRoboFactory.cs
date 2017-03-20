@@ -26,12 +26,29 @@ public class TestRoboFactory : MonoBehaviour
     touchAction.TouchDel = MovePoint;
   }
 
+  private void Update()
+  {
+    Vector3 enemyBase = new Vector3(0, 0.41f, 40.52f);
+    for(int i = 0; i < objList.Count; i++)
+    {
+      Vector3 vec = enemyBase - objList[i].transform.position;
+
+      if(vec.magnitude <= objList[i].GetComponent<RoboParam>().Range)
+      {
+        objList[i].GetComponent<RoboController>().TestShot(Vector3.Normalize(vec));
+      }
+
+    }
+  }
+
   public void CreateRobo()
   {
     var rbase = Create(roboBase);
     var obj = Create(leg);
     var obj2 = Create(wepon);
     var obj3 = Create(head);
+
+    rbase.transform.SetParent(this.transform);
 
     
     var con = obj.GetComponent<ConnectObject>().ConnectRoot;
@@ -43,6 +60,13 @@ public class TestRoboFactory : MonoBehaviour
 
     obj2.transform.localPosition = new Vector3(0, 0, 0);
     obj3.transform.localPosition = new Vector3(0, 0, 0);
+
+    rbase.GetComponent<RoboController>().shooter = obj2.GetComponent<Shooter>();
+    
+    Shooter shooter = obj2.GetComponent<Shooter>();
+    shooter.Atk = rbase.GetComponent<RoboParam>().CurAtk;
+    shooter.Range = rbase.GetComponent<RoboParam>().Range;
+    shooter.Rapid = rbase.GetComponent<RoboParam>().CurRapid;
 
     objList.Add(rbase);
 
@@ -76,7 +100,7 @@ public class TestRoboFactory : MonoBehaviour
 
     RaycastHit hit;
 
-    if (Physics.Raycast(Camera.main.ScreenPointToRay(_pos), out hit, 1000))
+    if (Physics.Raycast(camera.ScreenPointToRay(_pos), out hit, 1000))
     {
      
     }

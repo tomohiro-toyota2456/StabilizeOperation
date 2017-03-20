@@ -30,6 +30,8 @@
     Vector2 returnStPos;
     Vector2 returnEdPos;
 
+    bool isDrag = false;
+
     private void Start()
     {
       rectTransform = image.GetComponent<RectTransform>();
@@ -65,6 +67,7 @@
       screenSize.x = screenObj.rect.width;
       screenSize.y = screenObj.rect.height;
       beginDragPos = _data.position;
+      isDrag = true;
       image.gameObject.SetActive(true);
     }
 
@@ -104,15 +107,22 @@
         endDragDel(returnStPos, returnEdPos);
       }
 
+
+      isDrag = false;
+
       image.gameObject.SetActive(false);
     }
 
     public void OnPointerClick(PointerEventData _data)
     {
+      if (isDrag)
+        return;
+
       if(touchDel != null)
       {
         touchDel(_data.position);
       }
+    
     }
   }
 }

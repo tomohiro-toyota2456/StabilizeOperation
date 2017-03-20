@@ -12,6 +12,8 @@
     Vector3 targetPos;
     bool isMove = false;
 
+    public Shooter shooter;
+
     public void SetTargetPos(Vector3 _pos)
     {
       targetPos = _pos;
@@ -43,5 +45,12 @@
     {
       return true;
     }
+
+    public void TestShot(Vector3 _vec)
+    {
+      shooter.ShotVec = _vec;
+      shooter.Fire();
+    }
+
   }
 }
