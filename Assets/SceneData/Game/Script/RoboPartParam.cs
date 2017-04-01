@@ -33,10 +33,18 @@
       Laser
     }
 
+    public enum AddEffectType
+    {
+      None,
+
+    }
+
     [SerializeField]
     PartType partType;//部位タイプ
     [SerializeField]
     PartAttribute partAttribute;//部位属性
+    [SerializeField]
+    AddEffectType addEffectType;//追加効果
     [SerializeField]
     int hp;//体力
     [SerializeField]
