@@ -19,20 +19,17 @@
     {
         string m_sheetName = null;//取得するシート名
         IWorkbook m_workBook = null;
-        //コンストラクタ
-        public ExcelReader(string _filePath)
-        {
-            m_workBook = CreateWorkBook(_filePath);
-        }
+
         public ExcelReader() { }
 
-        //引数ありのコンストラクタの場合はCloseするまでは必要なし
-        public void Open(string _filePath)
+        public bool Open(string _filePath)
         {
             if (m_workBook == null)
             {
                 m_workBook = CreateWorkBook(_filePath);
             }
+
+            return m_workBook != null;
         }
 
         //終了処理
