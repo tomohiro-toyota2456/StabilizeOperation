@@ -36,7 +36,7 @@
           param = GetLegData(_id);
           break;
 
-        case "i":
+        case "a":
           param = GetAccessoryData(_id);
           break;
       }
