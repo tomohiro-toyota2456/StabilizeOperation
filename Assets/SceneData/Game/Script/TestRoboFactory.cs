@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Game.Robo;
+using Common.DataBase;
 public class TestRoboFactory : MonoBehaviour
 {
   [SerializeField]
@@ -44,9 +45,17 @@ public class TestRoboFactory : MonoBehaviour
   public void CreateRobo()
   {
     var rbase = Create(roboBase);
-    var obj = Create(leg);
-    var obj2 = Create(wepon);
-    var obj3 = Create(head);
+
+    var db = DataBaseManager.Instance.GetDataBase<MasterPartsDB>();
+
+    var param1 = db.GetData("h00001");
+    var param2 = db.GetData("w00001");
+    var param3 = db.GetData("l00001");
+
+    var obj  = Create(Resources.Load<GameObject>( "Leg/"+param3.Id));
+    var obj2 = Create(Resources.Load<GameObject>("Wepon/" + param2.Id));
+    var obj3 = Create(Resources.Load<GameObject>("Head/" + param1.Id));
+
 
     rbase.transform.SetParent(this.transform);
 
