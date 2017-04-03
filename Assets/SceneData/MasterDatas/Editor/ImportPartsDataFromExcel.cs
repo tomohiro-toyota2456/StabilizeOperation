@@ -7,12 +7,15 @@
   using Excel;
   using Common.MasterData;
   using Game.Robo;
+  using Shop;
 
   public class ImportPartsDataFromExcel : EditorWindow
   {
     static string excelPath = "Assets/SceneData/MasterDatas/Editor/PartDatas.xlsx";
+    static string shopExcelPath = "Assets/SceneData/MasterDatas/Editor/ShopDatas.xlsx";
     static string masterPartsDataPath = "Assets/SceneData/MasterDatas/MasterPartsData/MasterPartsData.asset";
-    static string basePath = "Assets/SceneData/MasterDatas/PartsData/";
+    static string masterShopDataPath = "Assets/SceneData/MasterDatas/MasterShopData/MasterShopData.asset";
+    static string basePath = "Assets/SceneData/MasterDatas/";
     [MenuItem("ExcelImporter/OpenImportWindow")]
     static public void OpenWindow()
     {
@@ -32,6 +35,20 @@
         if(GUILayout.Button("ImportPartsData"))
         {
           ImportPartsData();
+        }
+      }
+
+      using (new EditorGUILayout.HorizontalScope())
+      {
+        EditorGUILayout.LabelField("ShopDataExcelPath:");
+        shopExcelPath = EditorGUILayout.TextField(shopExcelPath);
+      }
+
+      using (new EditorGUILayout.VerticalScope())
+      {
+        if (GUILayout.Button("ImportShopData"))
+        {
+          ImportShopData();
         }
       }
     }
@@ -108,7 +125,7 @@
         partData.Dist = text;
         partData.RoboType = RoboPartParam.PartType.Head;
 
-        AssetDatabase.CreateAsset(partData, basePath + "Head/" + id + ".asset");
+        AssetDatabase.CreateAsset(partData, basePath +"PartsData/"+ "Head/" + id + ".asset");
         AssetDatabase.Refresh();
         headList.Add(partData);
 
@@ -164,7 +181,7 @@
         partData.Dist = text;
         partData.RoboType = RoboPartParam.PartType.Wepon;
 
-        AssetDatabase.CreateAsset(partData, basePath + "Wepon/" + id + ".asset");
+        AssetDatabase.CreateAsset(partData, basePath + "PartsData/" + "Wepon/" + id + ".asset");
         AssetDatabase.Refresh();
         weponList.Add(partData);
 
@@ -220,7 +237,7 @@
         partData.Dist = text;
         partData.RoboType = RoboPartParam.PartType.Leg;
 
-        AssetDatabase.CreateAsset(partData, basePath + "Leg/" + id + ".asset");
+        AssetDatabase.CreateAsset(partData, basePath + "PartsData/" + "Leg/" + id + ".asset");
         AssetDatabase.Refresh();
         legList.Add(partData);
 
@@ -276,7 +293,7 @@
         partData.Dist = text;
         partData.RoboType = RoboPartParam.PartType.Accessory;
 
-        AssetDatabase.CreateAsset(partData, basePath + "Accessory/" + id + ".asset");
+        AssetDatabase.CreateAsset(partData, basePath + "PartsData/" + "Accessory/" + id + ".asset");
         AssetDatabase.Refresh();
         accessoryList.Add(partData);
 
@@ -284,6 +301,74 @@
       }
 
       return accessoryList;
+    }
+
+    static void ImportShopData()
+    {
+      ExcelReader excelReader = new ExcelReader();
+      if (!excelReader.Open(shopExcelPath))
+      {
+        Debug.Log("ExcelRead Failed!!!");
+        return;
+      }
+
+      var masterShopData = CreateInstance<MasterShopData>();
+
+      string []sheetNameArray = new string[4];
+      sheetNameArray[0] = "Head";
+      sheetNameArray[1] = "Wepon";
+      sheetNameArray[2] = "Leg";
+      sheetNameArray[3] = "Accessory";
+
+      List<ProductData>[] productLists = new List<ProductData>[sheetNameArray.Length];
+      
+      for(int i = 0; i < sheetNameArray.Length; i++)
+      {
+        productLists[i] = new List<ProductData>();
+
+        excelReader.SetSheet(sheetNameArray[i]);
+
+        int cnt = 1;
+        while(true)
+        {
+          string str = excelReader.GetCellData(cnt, 0);
+
+          if(str == null)
+          {
+            break;
+          }
+
+          var product = CreateInstance<ProductData>();
+
+          int productId = int.Parse(str);
+          string itemId = excelReader.GetCellData(cnt, 1);
+          int price = int.Parse(excelReader.GetCellData(cnt, 2));
+          int needLv = int.Parse(excelReader.GetCellData(cnt, 3));
+
+          product.ProductId = productId;
+          product.ItemId = itemId;
+          product.Price = price;
+          product.NeedLevel = needLv;
+
+
+          AssetDatabase.CreateAsset(product, basePath+"ProductsData/"+sheetNameArray[i]+"/"+productId+".asset");
+          AssetDatabase.Refresh();
+          productLists[i].Add(product);
+          cnt++;
+        }
+
+      }
+
+      masterShopData.HeadPartProductList = productLists[0];
+      masterShopData.WeponPartProductList = productLists[1];
+      masterShopData.LegPartProductList = productLists[2];
+      masterShopData.AccessoryProductList = productLists[3];
+
+      AssetDatabase.CreateAsset(masterShopData, masterShopDataPath);
+      AssetDatabase.Refresh();
+
+      Debug.Log("FnishCreateMasterShopData!!!");
+
     }
 
 
