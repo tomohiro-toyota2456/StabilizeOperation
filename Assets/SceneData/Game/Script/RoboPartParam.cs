@@ -75,6 +75,8 @@
     int fov;//視野　ロボからの視界半径とする？
     [SerializeField]
     string dist;
+    [SerializeField]
+    string name;
 
     //プロパティ群
     public string Id { get { return id; } set { id = value; } } 
@@ -90,6 +92,7 @@
     public int Fov    { get { return fov; }    set { fov = value; } }
     public float[] Regist { get { return regist; } set { regist = value; } }
     public string Dist { get { return dist; } set { dist = value; } }
+    public string Name { get { return name; } set { name = value; } }
     
     public PartType RoboType { get { return partType; }set { partType = value; } }
     public PartAttribute RoboAttribute { get { return partAttribute; } set { partAttribute = value; } }

@@ -75,24 +75,26 @@
         var partData = CreateInstance<RoboPartParam>();
 
         string id = data;
-        int hp = int.Parse(_excelReader.GetCellData(cnt, 1));
-        int def = int.Parse(_excelReader.GetCellData(cnt, 2));
-        int atk = int.Parse(_excelReader.GetCellData(cnt, 3));
-        int rapid = int.Parse(_excelReader.GetCellData(cnt, 4));
-        int spd = int.Parse(_excelReader.GetCellData(cnt, 5));
-        int weight = int.Parse(_excelReader.GetCellData(cnt, 6));
-        int cost = int.Parse(_excelReader.GetCellData(cnt, 7));
-        int fov = int.Parse(_excelReader.GetCellData(cnt, 8));
-        float regist1 = float.Parse(_excelReader.GetCellData(cnt, 9));
-        float regist2 = float.Parse(_excelReader.GetCellData(cnt, 10));
-        float regist3 = float.Parse(_excelReader.GetCellData(cnt, 11));
-        string text = _excelReader.GetCellData(cnt, 12);
+        string name = _excelReader.GetCellData(cnt, 1);
+        int hp = int.Parse(_excelReader.GetCellData( cnt, 2));
+        int def = int.Parse(_excelReader.GetCellData(cnt, 3));
+        int atk = int.Parse(_excelReader.GetCellData(cnt, 4));
+        int rapid = int.Parse(_excelReader.GetCellData(cnt, 5));
+        int spd = int.Parse(_excelReader.GetCellData(cnt, 6));
+        int weight = int.Parse(_excelReader.GetCellData(cnt, 7));
+        int cost = int.Parse(_excelReader.GetCellData(cnt, 8));
+        int fov = int.Parse(_excelReader.GetCellData(cnt, 9));
+        float regist1 = float.Parse(_excelReader.GetCellData(cnt, 10));
+        float regist2 = float.Parse(_excelReader.GetCellData(cnt, 11));
+        float regist3 = float.Parse(_excelReader.GetCellData(cnt, 12));
+        string text = _excelReader.GetCellData(cnt, 13);
 
         float[] regists = new float[3];
         regists[0] = regist1;
         regists[1] = regist2;
         regists[2] = regist3;
 
+        partData.Name = name;
         partData.Id = id;
         partData.Hp = hp;
         partData.Def = def;
@@ -134,18 +136,20 @@
         var partData = CreateInstance<RoboPartParam>();
 
         string id = data;
-        int hp = int.Parse(_excelReader.GetCellData(cnt, 1));
-        int def = int.Parse(_excelReader.GetCellData(cnt, 2));
-        int atk = int.Parse(_excelReader.GetCellData(cnt, 3));
-        int rapid = int.Parse(_excelReader.GetCellData(cnt, 4));
-        int spd = int.Parse(_excelReader.GetCellData(cnt, 5));
-        int weight = int.Parse(_excelReader.GetCellData(cnt, 6));
-        int cost = int.Parse(_excelReader.GetCellData(cnt, 7));
-        int range = int.Parse(_excelReader.GetCellData(cnt, 8));
-        int shotType = int.Parse(_excelReader.GetCellData(cnt, 9));
-        int addEffectType = int.Parse(_excelReader.GetCellData(cnt, 10));
-        string text = _excelReader.GetCellData(cnt, 11);
+        string name = _excelReader.GetCellData(cnt, 1);
+        int hp = int.Parse(_excelReader.GetCellData(cnt, 2));
+        int def = int.Parse(_excelReader.GetCellData(cnt, 3));
+        int atk = int.Parse(_excelReader.GetCellData(cnt, 4));
+        int rapid = int.Parse(_excelReader.GetCellData(cnt, 5));
+        int spd = int.Parse(_excelReader.GetCellData(cnt, 6));
+        int weight = int.Parse(_excelReader.GetCellData(cnt, 7));
+        int cost = int.Parse(_excelReader.GetCellData(cnt, 8));
+        int range = int.Parse(_excelReader.GetCellData(cnt, 9));
+        int shotType = int.Parse(_excelReader.GetCellData(cnt, 10));
+        int addEffectType = int.Parse(_excelReader.GetCellData(cnt, 11));
+        string text = _excelReader.GetCellData(cnt, 12);
 
+        partData.Name = name;
         partData.Id = id;
         partData.Hp = hp;
         partData.Def = def;
@@ -188,19 +192,20 @@
         var partData = CreateInstance<RoboPartParam>();
 
         string id = data;
-        int hp = int.Parse(_excelReader.GetCellData(cnt, 1));
-        int def = int.Parse(_excelReader.GetCellData(cnt, 2));
-        int atk = int.Parse(_excelReader.GetCellData(cnt, 3));
-        int rapid = int.Parse(_excelReader.GetCellData(cnt, 4));
-        int spd = int.Parse(_excelReader.GetCellData(cnt, 5));
-        int weight = int.Parse(_excelReader.GetCellData(cnt, 6));
-        int cost = int.Parse(_excelReader.GetCellData(cnt, 7));
-        int load = int.Parse(_excelReader.GetCellData(cnt, 8));
-        int legType = int.Parse(_excelReader.GetCellData(cnt, 9));
-        int addEffectType = int.Parse(_excelReader.GetCellData(cnt, 10));
-        string text = _excelReader.GetCellData(cnt, 11);
+        string name = _excelReader.GetCellData(cnt, 1);
+        int hp = int.Parse(_excelReader.GetCellData(cnt, 2));
+        int def = int.Parse(_excelReader.GetCellData(cnt, 3));
+        int atk = int.Parse(_excelReader.GetCellData(cnt, 4));
+        int rapid = int.Parse(_excelReader.GetCellData(cnt, 5));
+        int spd = int.Parse(_excelReader.GetCellData(cnt, 6));
+        int weight = int.Parse(_excelReader.GetCellData(cnt, 7));
+        int cost = int.Parse(_excelReader.GetCellData(cnt, 8));
+        int load = int.Parse(_excelReader.GetCellData(cnt, 9));
+        int legType = int.Parse(_excelReader.GetCellData(cnt, 10));
+        int addEffectType = int.Parse(_excelReader.GetCellData(cnt, 11));
+        string text = _excelReader.GetCellData(cnt, 12);
 
-
+        partData.Name = name;
         partData.Id = id;
         partData.Hp = hp;
         partData.Def = def;
@@ -243,19 +248,21 @@
         var partData = CreateInstance<RoboPartParam>();
 
         string id = data;
-        int hp = int.Parse(_excelReader.GetCellData(cnt, 1));
-        int def = int.Parse(_excelReader.GetCellData(cnt, 2));
-        int atk = int.Parse(_excelReader.GetCellData(cnt, 3));
-        int rapid = int.Parse(_excelReader.GetCellData(cnt, 4));
-        int spd = int.Parse(_excelReader.GetCellData(cnt, 5));
-        int weight = int.Parse(_excelReader.GetCellData(cnt, 6));
-        int cost = int.Parse(_excelReader.GetCellData(cnt, 7));
-        int range = int.Parse(_excelReader.GetCellData(cnt, 8));
-        int load = int.Parse(_excelReader.GetCellData(cnt, 9));
-        int addEffectType = int.Parse(_excelReader.GetCellData(cnt, 10));
-        string text = _excelReader.GetCellData(cnt, 11);
+        string name = _excelReader.GetCellData(cnt, 1);
+        int hp = int.Parse(_excelReader.GetCellData(cnt, 2));
+        int def = int.Parse(_excelReader.GetCellData(cnt, 3));
+        int atk = int.Parse(_excelReader.GetCellData(cnt, 4));
+        int rapid = int.Parse(_excelReader.GetCellData(cnt, 5));
+        int spd = int.Parse(_excelReader.GetCellData(cnt, 6));
+        int weight = int.Parse(_excelReader.GetCellData(cnt, 7));
+        int cost = int.Parse(_excelReader.GetCellData(cnt, 8));
+        int range = int.Parse(_excelReader.GetCellData(cnt, 9));
+        int load = int.Parse(_excelReader.GetCellData(cnt, 10));
+        int addEffectType = int.Parse(_excelReader.GetCellData(cnt, 11));
+        string text = _excelReader.GetCellData(cnt, 12);
 
 
+        partData.Name = name;
         partData.Id = id;
         partData.Hp = hp;
         partData.Def = def;
