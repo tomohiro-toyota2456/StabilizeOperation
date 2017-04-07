@@ -77,6 +77,10 @@
     string dist;
     [SerializeField]
     string name;
+    [SerializeField]
+    int ctPer;//クリティカル率　ここでは1~100で行う
+    
+
 
     //プロパティ群
     public string Id { get { return id; } set { id = value; } } 
@@ -93,6 +97,7 @@
     public float[] Regist { get { return regist; } set { regist = value; } }
     public string Dist { get { return dist; } set { dist = value; } }
     public string Name { get { return name; } set { name = value; } }
+    public int CtPer { get { return ctPer; }set { ctPer = value; } }
     
     public PartType RoboType { get { return partType; }set { partType = value; } }
     public PartAttribute RoboAttribute { get { return partAttribute; } set { partAttribute = value; } }

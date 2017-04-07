@@ -165,6 +165,7 @@
         int shotType = int.Parse(_excelReader.GetCellData(cnt, 10));
         int addEffectType = int.Parse(_excelReader.GetCellData(cnt, 11));
         string text = _excelReader.GetCellData(cnt, 12);
+        int ctPer = int.Parse(_excelReader.GetCellData(cnt, 13));
 
         partData.Name = name;
         partData.Id = id;
@@ -180,6 +181,7 @@
         partData.RoboAttribute = (RoboPartParam.PartAttribute)(10 + shotType);
         partData.Dist = text;
         partData.RoboType = RoboPartParam.PartType.Wepon;
+        partData.CtPer = ctPer;
 
         AssetDatabase.CreateAsset(partData, basePath + "PartsData/" + "Wepon/" + id + ".asset");
         AssetDatabase.Refresh();
