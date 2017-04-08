@@ -8,13 +8,16 @@
   using Common.MasterData;
   using Game.Robo;
   using Shop;
+  using Exp;
 
   public class ImportPartsDataFromExcel : EditorWindow
   {
     static string excelPath = "Assets/SceneData/MasterDatas/Editor/PartDatas.xlsx";
     static string shopExcelPath = "Assets/SceneData/MasterDatas/Editor/ShopDatas.xlsx";
+    static string expTableExcelPath = "Assets/SceneData/MasterDatas/Editor/ExpTable.xlsx";
     static string masterPartsDataPath = "Assets/SceneData/MasterDatas/MasterPartsData/MasterPartsData.asset";
     static string masterShopDataPath = "Assets/SceneData/MasterDatas/MasterShopData/MasterShopData.asset";
+    static string masterExpTablePath = "Assets/SceneData/MasterDatas/MasterExpTableData/MasterExpTableData.asset";
     static string basePath = "Assets/SceneData/MasterDatas/";
     [MenuItem("ExcelImporter/OpenImportWindow")]
     static public void OpenWindow()
@@ -51,8 +54,23 @@
           ImportShopData();
         }
       }
+
+      using (new EditorGUILayout.HorizontalScope())
+      {
+        EditorGUILayout.LabelField("ExpTableExcelPath:");
+        shopExcelPath = EditorGUILayout.TextField(expTableExcelPath);
+      }
+
+      using (new EditorGUILayout.VerticalScope())
+      {
+        if (GUILayout.Button("ImportExpTableData"))
+        {
+          ImportExpTableData();
+        }
+      }
     }
 
+    #region Parts
     static void ImportPartsData()
     {
       ExcelReader excelReader = new ExcelReader();
@@ -305,6 +323,9 @@
       return accessoryList;
     }
 
+    #endregion
+
+    #region Shop
     static void ImportShopData()
     {
       ExcelReader excelReader = new ExcelReader();
@@ -372,7 +393,142 @@
       Debug.Log("FnishCreateMasterShopData!!!");
 
     }
+    #endregion
 
+    #region Exp
+
+    static void ImportExpTableData()
+    {
+      ExcelReader excelReader = new ExcelReader();
+      if (!excelReader.Open(expTableExcelPath))
+      {
+        Debug.Log("ExcelRead Failed!!!");
+        return;
+      }
+
+      var list1 = ImportExp("HeadExp",excelReader);
+      var list2 = ImportExp("WeponExp", excelReader);
+      var list3 = ImportExp("LegExp", excelReader);
+      var list4 = ImportExp("AccessoryExp", excelReader);
+
+      MasterExpTableData master = CreateInstance<MasterExpTableData>();
+      master.HeadPartExpList = list1;
+      master.WeponPartExpList = list2;
+      master.LegPartExpList = list3;
+      master.AccessoryPartExpList = list4;
+
+      AssetDatabase.CreateAsset(master,masterExpTablePath);
+      AssetDatabase.Refresh();
+
+      Debug.Log("FinishCreateMasterExpTableData!!!");
+
+    }
+
+    static List<ExpTableData> ImportExp(string _sheetName,ExcelReader _excelReader)
+    {
+      _excelReader.SetSheet(_sheetName);
+
+      List<ExpTableData> list = new List<ExpTableData>();
+      int cnt = 1;
+      //Headパーツ読み込み
+      while (true)
+      {
+        var data = _excelReader.GetCellData(cnt, 0);
+
+        if (data == null)
+        {
+          break;
+        }
+        string type = _excelReader.GetCellData(cnt, 1);
+        int hp = int.Parse(_excelReader.GetCellData(cnt, 2));
+        int def = int.Parse(_excelReader.GetCellData(cnt, 3));
+        int atk = int.Parse(_excelReader.GetCellData(cnt, 4));
+        int rapid = int.Parse(_excelReader.GetCellData(cnt, 5));
+        int spd = int.Parse(_excelReader.GetCellData(cnt, 6));
+        int weight = int.Parse(_excelReader.GetCellData(cnt, 7));
+        int cost = int.Parse(_excelReader.GetCellData(cnt, 8));
+        int fov = int.Parse(_excelReader.GetCellData(cnt, 9));
+        int range = int.Parse(_excelReader.GetCellData(cnt, 10));
+        int load = int.Parse(_excelReader.GetCellData(cnt, 11));
+        int ctPer = int.Parse(_excelReader.GetCellData(cnt, 12));
+
+        ExpTableData exptableData = CreateInstance<ExpTableData>();
+        exptableData.Id = data;
+        exptableData.Hp = hp;
+        exptableData.Def = def;
+        exptableData.Atk = atk;
+        exptableData.Rapid = rapid;
+        exptableData.Spd = spd;
+        exptableData.Weight = weight;
+        exptableData.Cost = cost;
+        exptableData.Fov = fov;
+        exptableData.Range = range;
+        exptableData.Load = load;
+        exptableData.CtPer = ctPer;
+        exptableData.Type = ConvertGrowthTypeFromStr(type);
+
+        string dir = ConvertDirNameFromId(exptableData.Id);
+
+        AssetDatabase.CreateAsset(exptableData, basePath + "ExpTableData/" + dir + "/" + "exp_"+exptableData.Id + ".asset");
+        AssetDatabase.Refresh();
+
+        list.Add(exptableData);
+
+        cnt++;
+      }
+
+      return list;
+    } 
+
+    static string ConvertDirNameFromId(string _id)
+    {
+      string headStr = _id.Substring(0,1);
+      switch(headStr)
+      {
+        case "h":
+          return "Head";
+          break;
+        case "w":
+          return "Wepon";
+          break;
+        case "l":
+          return "Leg";
+          break;
+        case "a":
+          return "Accessory";
+          break;       
+      }
+
+      Debug.Log("ID Wrong!!!");
+      return "";
+    }
+
+    static ExpTableData.GrowthType ConvertGrowthTypeFromStr(string _str)
+    {
+      ExpTableData.GrowthType type = ExpTableData.GrowthType.Fast;
+      switch(_str)
+      {
+        case "早熟":
+          type = ExpTableData.GrowthType.Fast;
+          break;
+
+        case "普通":
+          type = ExpTableData.GrowthType.Normal;
+          break;
+
+        case "晩成":
+          type = ExpTableData.GrowthType.Slow;
+          break;
+
+        default:
+          Debug.Log("GrowthType Wrong!!!");
+          break;
+      }
+
+      return type;
+    }
+
+    #endregion
 
 
   }
