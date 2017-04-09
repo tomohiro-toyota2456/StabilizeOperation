@@ -58,7 +58,7 @@
       using (new EditorGUILayout.HorizontalScope())
       {
         EditorGUILayout.LabelField("ExpTableExcelPath:");
-        shopExcelPath = EditorGUILayout.TextField(expTableExcelPath);
+        expTableExcelPath = EditorGUILayout.TextField(expTableExcelPath);
       }
 
       using (new EditorGUILayout.VerticalScope())
@@ -374,7 +374,7 @@
           product.NeedLevel = needLv;
 
 
-          AssetDatabase.CreateAsset(product, basePath+"ProductsData/"+sheetNameArray[i]+"/"+productId+".asset");
+          AssetDatabase.CreateAsset(product, basePath+"ProductsData/"+sheetNameArray[i]+"/"+"s_"+productId+".asset");
           AssetDatabase.Refresh();
           productLists[i].Add(product);
           cnt++;
