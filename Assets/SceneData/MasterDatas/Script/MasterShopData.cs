@@ -1,8 +1,9 @@
-﻿namespace Shop
+﻿namespace Common.MasterData
 {
   using System.Collections;
   using System.Collections.Generic;
   using UnityEngine;
+  using Shop;
 
   public class MasterShopData : ScriptableObject
   {

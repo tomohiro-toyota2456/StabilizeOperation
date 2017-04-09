@@ -1,8 +1,9 @@
-﻿namespace Exp
+﻿namespace Common.MasterData
 {
   using System.Collections;
   using System.Collections.Generic;
   using UnityEngine;
+  using Exp;
 
   public class MasterExpTableData : ScriptableObject
   {

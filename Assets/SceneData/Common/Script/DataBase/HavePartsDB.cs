@@ -253,6 +253,27 @@
 
     #endregion
 
+    //所持パーツ毎のid配列を返す
+    public string[] GetHaveHeadIds()
+    {
+      return headParts.partList.Select(d => d.id).ToArray();
+    }
+
+    public string[] GetHaveWeponIds()
+    {
+      return weponParts.partList.Select(d => d.id).ToArray();
+    }
+
+    public string[] GetHaveLegIds()
+    {
+      return legParts.partList.Select(d => d.id).ToArray();
+    }
+
+    public string[] GetHaveAccessoryIds()
+    {
+      return accessoryParts.partList.Select(d => d.id).ToArray();
+    }
+
     //パーツ所持データ保存
     public void SaveData()
     {

@@ -9,15 +9,26 @@
   using Game.Robo;
   using Shop;
   using Exp;
+  using Item;
+  using Mission;
+  using EnemyUnitData;
 
   public class ImportPartsDataFromExcel : EditorWindow
   {
     static string excelPath = "Assets/SceneData/MasterDatas/Editor/PartDatas.xlsx";
     static string shopExcelPath = "Assets/SceneData/MasterDatas/Editor/ShopDatas.xlsx";
     static string expTableExcelPath = "Assets/SceneData/MasterDatas/Editor/ExpTable.xlsx";
+    static string itemExcelPath = "Assets/SceneData/MasterDatas/Editor/ItemData.xlsx";
+    static string missionExcelPath = "Assets/SceneData/MasterDatas/Editor/MissionData.xlsx";
+    static string enemyUnitExcelPath= "Assets/SceneData/MasterDatas/Editor/EnemyUnitData.xlsx";
+
     static string masterPartsDataPath = "Assets/SceneData/MasterDatas/MasterPartsData/MasterPartsData.asset";
     static string masterShopDataPath = "Assets/SceneData/MasterDatas/MasterShopData/MasterShopData.asset";
     static string masterExpTablePath = "Assets/SceneData/MasterDatas/MasterExpTableData/MasterExpTableData.asset";
+    static string masterItemDataPath= "Assets/SceneData/MasterDatas/MasterItemData/MasterItemData.asset";
+    static string masterMissionDataPath = "Assets/SceneData/MasterDatas/MasterMissionData/MasterMissionData.asset";
+    static string masterEnemyUnitDataPath= "Assets/SceneData/MasterDatas/MasterEnemyUnitData/MasterEnemyUnitData.asset";
+
     static string basePath = "Assets/SceneData/MasterDatas/";
     [MenuItem("ExcelImporter/OpenImportWindow")]
     static public void OpenWindow()
@@ -27,6 +38,7 @@
 
     private void OnGUI()
     {
+      //パーツデータ
       using (new EditorGUILayout.HorizontalScope())
       {
         EditorGUILayout.LabelField("PartsDataExcelPath:");
@@ -41,6 +53,8 @@
         }
       }
 
+
+      //ショップデータ
       using (new EditorGUILayout.HorizontalScope())
       {
         EditorGUILayout.LabelField("ShopDataExcelPath:");
@@ -55,6 +69,8 @@
         }
       }
 
+
+      //経験値データ
       using (new EditorGUILayout.HorizontalScope())
       {
         EditorGUILayout.LabelField("ExpTableExcelPath:");
@@ -66,6 +82,52 @@
         if (GUILayout.Button("ImportExpTableData"))
         {
           ImportExpTableData();
+        }
+      }
+
+      //アイテムデータ
+      using (new EditorGUILayout.HorizontalScope())
+      {
+        EditorGUILayout.LabelField("ItemDataExcelPath:");
+        itemExcelPath = EditorGUILayout.TextField(itemExcelPath);
+      }
+
+      using (new EditorGUILayout.VerticalScope())
+      {
+        if (GUILayout.Button("ImportItemData"))
+        {
+          ImportItemData();
+        }
+      }
+
+      //ミッションデータ
+      using (new EditorGUILayout.HorizontalScope())
+      {
+        EditorGUILayout.LabelField("MissionDataExcelPath:");
+        missionExcelPath = EditorGUILayout.TextField(missionExcelPath);
+      }
+
+      using (new EditorGUILayout.VerticalScope())
+      {
+        if (GUILayout.Button("ImportMissionData"))
+        {
+          ImportMissionData();
+        }
+      }
+
+
+      //敵ユニットデータ
+      using (new EditorGUILayout.HorizontalScope())
+      {
+        EditorGUILayout.LabelField("EnemyUnitDataExcelPath:");
+        enemyUnitExcelPath = EditorGUILayout.TextField(enemyUnitExcelPath);
+      }
+
+      using (new EditorGUILayout.VerticalScope())
+      {
+        if (GUILayout.Button("ImportEnemyUnitData"))
+        {
+          ImportEnemyUnitData();
         }
       }
     }
@@ -390,7 +452,7 @@
       AssetDatabase.CreateAsset(masterShopData, masterShopDataPath);
       AssetDatabase.Refresh();
 
-      Debug.Log("FnishCreateMasterShopData!!!");
+      Debug.Log("FinshCreateMasterShopData!!!");
 
     }
     #endregion
@@ -526,6 +588,282 @@
       }
 
       return type;
+    }
+
+    #endregion
+
+    #region Item
+
+    static void ImportItemData()
+    {
+      ExcelReader excelReader = new ExcelReader();
+      if (!excelReader.Open(itemExcelPath))
+      {
+        Debug.Log("ExcelRead Failed!!!");
+        return;
+      }
+
+      var master = CreateInstance<MasterItemData>();
+      master.List = ImportItem(excelReader);
+
+      AssetDatabase.CreateAsset(master, masterItemDataPath);
+
+      Debug.Log("FinishCreateMasterItemData!!!");
+    }
+
+    static List<ItemData> ImportItem(ExcelReader _excelReader)
+    {
+      _excelReader.SetSheet("Item");
+
+      int cnt = 1;
+
+      List<ItemData> list = new List<ItemData>();
+
+      while(true)
+      {
+        string data = _excelReader.GetCellData(cnt, 0);
+
+        if(string.IsNullOrEmpty(data))
+        {
+          break;
+        }
+
+        string name = _excelReader.GetCellData(cnt, 1);
+        string type = _excelReader.GetCellData(cnt, 2);
+        int effect = int.Parse(_excelReader.GetCellData(cnt, 3));
+        string text = _excelReader.GetCellData(cnt, 4);
+
+        var item = CreateInstance<ItemData>();
+        item.Id = data;
+        item.Name = name;
+        item.Dist = text;
+        item.Effect = effect;
+        item.Type = ConvertItemTypeFromStr(type);
+
+        AssetDatabase.CreateAsset(item, basePath + "ItemsData/"+item.Id + ".asset");
+        AssetDatabase.Refresh();
+        list.Add(item);
+        cnt++;
+      }
+
+      return list;
+    }
+
+    static ItemData.ItemType ConvertItemTypeFromStr(string _str)
+    {
+      ItemData.ItemType type = ItemData.ItemType.Exp;
+      switch(_str)
+      {
+        case "Exp":
+          type = ItemData.ItemType.Exp;
+          break;
+      }
+
+      return type;
+    }
+
+    #endregion
+
+    #region Misson
+
+    static void ImportMissionData()
+    {
+      ExcelReader excelReader = new ExcelReader();
+      if (!excelReader.Open(missionExcelPath))
+      {
+        Debug.Log("ExcelRead Failed!!!");
+        return;
+      }
+
+      var master = CreateInstance<MasterMissionData>();
+
+      master.List = ImportMission(excelReader);
+      master.ChapterNameArray = ImportChapterName(excelReader);
+
+
+      AssetDatabase.CreateAsset(master, masterMissionDataPath);
+      AssetDatabase.Refresh();
+
+      Debug.Log("FinshCreateMasterMissionData!!!");
+
+    }
+
+    static string[] ImportChapterName(ExcelReader _excelReader)
+    {
+      _excelReader.SetSheet("ChapterData");
+
+      int cnt = 1;
+
+      List<string> list = new List<string>();
+
+      while (true)
+      {
+        string data = _excelReader.GetCellData(cnt, 0);
+
+        if (string.IsNullOrEmpty(data))
+        {
+          break;
+        }
+
+        list.Add(_excelReader.GetCellData(cnt, 1));
+
+        cnt++;
+      }
+
+      return list.ToArray();
+
+    }
+
+    static List<MissionData> ImportMission(ExcelReader _excelReader)
+    {
+      _excelReader.SetSheet("MissionData");
+
+      int cnt = 1;
+
+      List<MissionData> list = new List<MissionData>();
+
+      while (true)
+      {
+        string data = _excelReader.GetCellData(cnt, 0);
+
+        if (string.IsNullOrEmpty(data))
+        {
+          break;
+        }
+
+        string missionId = _excelReader.GetCellData(cnt, 1);
+        string missionName = _excelReader.GetCellData(cnt, 2);
+
+        List<string> rewardIdList = new List<string>();
+
+        for (int i = 0; i < 5; i++)
+        {
+          int idx = i + 3;
+          string id = _excelReader.GetCellData(cnt, idx);
+          if (string.IsNullOrEmpty(id))
+          {
+            break;
+          }
+
+          rewardIdList.Add(id);
+        }
+
+        List<string> dropIdList = new List<string>();
+
+        for (int i = 0; i < 5; i++)
+        {
+          int idx = i + 8;
+          string id = _excelReader.GetCellData(cnt, idx);
+          if (string.IsNullOrEmpty(id))
+          {
+            break;
+          }
+
+          dropIdList.Add(id);
+        }
+
+        List<MissionData.EnemyUnitData> eUnitList = new List<MissionData.EnemyUnitData>();
+        for (int i = 0; i < 20; i += 2)
+        {
+          int idx = i + 13;
+          string id = _excelReader.GetCellData(cnt, idx);
+          if(string.IsNullOrEmpty(id))
+          {
+            break;
+          }
+
+          MissionData.EnemyUnitData eData = new MissionData.EnemyUnitData();
+          eData.enemyUnitId = id;
+          eData.lv =int.Parse(_excelReader.GetCellData(cnt, idx + 1));
+
+          eUnitList.Add(eData);
+        }
+
+        var missionData = CreateInstance<MissionData>();
+        missionData.MissionId = missionId;
+        missionData.ChapterId = int.Parse(data);
+        missionData.Name = missionName;
+        missionData.RewardIdArray = rewardIdList.ToArray();
+        missionData.DropIdArray = dropIdList.ToArray();
+        missionData.EUnitDataArray = eUnitList.ToArray();
+
+        AssetDatabase.CreateAsset(missionData, basePath + "MissionDatas/" + missionData.MissionId + ".asset");
+        AssetDatabase.Refresh();
+
+        list.Add(missionData);
+
+        cnt++;
+
+      }
+
+      return list;
+     }
+
+    #endregion
+
+    #region EnemyUnit
+
+    static void ImportEnemyUnitData()
+    {
+      ExcelReader excelReader = new ExcelReader();
+      if (!excelReader.Open(enemyUnitExcelPath))
+      {
+        Debug.Log("ExcelRead Failed!!!");
+        return;
+      }
+
+      var master = CreateInstance<MasterEnemyUnitData>();
+      master.List = ImportEnemyUnit(excelReader);
+      AssetDatabase.CreateAsset(master,masterEnemyUnitDataPath);
+      AssetDatabase.Refresh();
+
+      Debug.Log("FinishCreateMasterEnemyUnitData");
+    }
+    
+    static List<EnemyUnitData> ImportEnemyUnit(ExcelReader _excelReader)
+    {
+      _excelReader.SetSheet("EnemyUnitData");
+
+      int cnt = 1;
+
+      List<EnemyUnitData> list = new List<EnemyUnitData>();
+
+      while (true)
+      {
+        string data = _excelReader.GetCellData(cnt, 0);
+
+        if (string.IsNullOrEmpty(data))
+        {
+          break;
+        }
+
+        List<string> partsList = new List<string>();
+        for(int i = 0; i < 4;i++)
+        {
+          int idx = i + 1;
+
+          string id = _excelReader.GetCellData(cnt, idx);
+          if (string.IsNullOrEmpty(id))
+          {
+            break;
+          }
+
+          partsList.Add(id);
+        }
+
+        var eUnitData = CreateInstance<EnemyUnitData>();
+        eUnitData.EnemyUnitId = data;
+        eUnitData.PartIdArray = partsList.ToArray();
+
+
+        AssetDatabase.CreateAsset(eUnitData, basePath + "EnemyUnitDatas/" + eUnitData.EnemyUnitId + ".asset");
+        AssetDatabase.Refresh();
+
+        list.Add(eUnitData);
+        cnt++;
+      }
+
+      return list;
     }
 
     #endregion
