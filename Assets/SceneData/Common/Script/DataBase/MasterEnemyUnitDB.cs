@@ -12,14 +12,17 @@
     [SerializeField]
     MasterEnemyUnitData master;
 
+    MasterEnemyUnitData masterClone;
+
     public override void Init()
     {
+      masterClone = Instantiate(master);
       base.Init();
     }
 
     public EnemyUnitData GetData(string _id)
     {
-      return master.List.First(d => d.EnemyUnitId == _id);
+      return masterClone.List.First(d => d.EnemyUnitId == _id);
     }
   }
 }

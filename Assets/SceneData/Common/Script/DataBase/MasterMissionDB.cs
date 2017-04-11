@@ -12,24 +12,27 @@
     [SerializeField]
     MasterMissionData master;
 
+    MasterMissionData masterClone;
+
     public override void Init()
     {
+      masterClone = Instantiate(master);
       base.Init();
     }
 
     public MissionData GetData(string _missionId)
     {
-      return master.List.First(d => d.MissionId == _missionId);
+      return masterClone.List.First(d => d.MissionId == _missionId);
     }
 
     public MissionData[] GetDataArray(int _chapterId)
     {
-      return master.List.Where(d => d.ChapterId == _chapterId).ToArray();
+      return masterClone.List.Where(d => d.ChapterId == _chapterId).ToArray();
     }
 
     public string GetChapterName(int _chapterId)
     {
-      return master.ChapterNameArray[_chapterId - 1];
+      return masterClone.ChapterNameArray[_chapterId - 1];
     }
   }
 }

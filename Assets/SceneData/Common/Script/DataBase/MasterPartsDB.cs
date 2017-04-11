@@ -12,9 +12,11 @@
     [SerializeField]
     MasterPartsData masterPartsData;
 
+    MasterPartsData masterClone;
+
     public override void Init()
     {
-
+      masterClone = Instantiate(masterPartsData);
     }
 
     public RoboPartParam GetData(string _id)
@@ -47,46 +49,46 @@
 
     public RoboPartParam GetHeadData(string _id)
     {
-      var part = masterPartsData.HeadDataList.First(data=> data.Id == _id);
+      var part = masterClone.HeadDataList.First(data=> data.Id == _id);
       return part;
     }
 
     public RoboPartParam GetWeponData(string _id)
     {
-      var part = masterPartsData.WeponDataList.First(data => data.Id == _id);
+      var part = masterClone.WeponDataList.First(data => data.Id == _id);
       return part;
     }
 
     public RoboPartParam GetLegData(string _id)
     {
-      var part = masterPartsData.LegDataList.First(data => data.Id == _id);
+      var part = masterClone.LegDataList.First(data => data.Id == _id);
       return part;
     }
 
     public RoboPartParam GetAccessoryData(string _id)
     {
-      var part = masterPartsData.AccessoryDataList.First(data => data.Id == _id);
+      var part = masterClone.AccessoryDataList.First(data => data.Id == _id);
       return part;
     }
 
     public RoboPartParam[] GetHeadDataArray()
     {
-      return masterPartsData.HeadDataList.ToArray();
+      return masterClone.HeadDataList.ToArray();
     }
 
     public RoboPartParam[] GetWeponDataArray()
     {
-      return masterPartsData.WeponDataList.ToArray();
+      return masterClone.WeponDataList.ToArray();
     }
 
     public RoboPartParam[] GetLegDataArray()
     {
-      return masterPartsData.LegDataList.ToArray();
+      return masterClone.LegDataList.ToArray();
     }
 
     public RoboPartParam[] GetAccessoryDataArray()
     {
-      return masterPartsData.AccessoryDataList.ToArray();
+      return masterClone.AccessoryDataList.ToArray();
     }
 
   }

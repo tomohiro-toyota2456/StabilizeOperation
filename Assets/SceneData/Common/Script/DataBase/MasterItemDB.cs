@@ -11,9 +11,17 @@
     [SerializeField]
     MasterItemData master;
 
+    MasterItemData masterClone;
+
+    public override void Init()
+    {
+      masterClone = Instantiate(master);
+      base.Init();
+    }
+
     public ItemData GetData(string _id)
     {
-      return master.List.First(d => d.Id == _id);
+      return masterClone.List.First(d => d.Id == _id);
     }
 
   }
