@@ -17,6 +17,19 @@
 
     readonly string key = "oJFPOWHFO2e{}QFHJwq";
 
+    //******************************************************
+    //UserData
+    //データ保持用　Josn化はこちらのクラスで行う
+    //******************************************************
+    public class UserData
+    {
+      public string userName;
+      public int userLv;
+      public int curExp;
+      public int money;
+      public UserDataObject.OrganizationData[] organizationDataArray;
+    }
+
     public bool CheckExistData()
     {
       string json = PlayerPrefs.GetString(key);

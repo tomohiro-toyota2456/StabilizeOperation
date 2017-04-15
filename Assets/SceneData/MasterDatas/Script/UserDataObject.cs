@@ -5,7 +5,7 @@ using UnityEngine;
 //UserDataObject
 //初期データ用オブジェクト
 //******************************************************
-[CreateAssetMenu(fileName ="UserSaveData",menuName ="CreateScriptableObject/UserSaveData",order = 100)]
+[CreateAssetMenu(fileName ="UserDataObject",menuName ="CreateScriptableObject/UserDataObject",order = 100)]
 public class UserDataObject : ScriptableObject
 {
   [SerializeField]
@@ -39,16 +39,4 @@ public class UserDataObject : ScriptableObject
   public int UserLv { get { return userLv; } }
   public int Money { get { return money; } }
   public OrganizationData[] OrganizationDataArray { get { return organizationDataArray; } }
-}
-//******************************************************
-//UserData
-//データ保持用　Josn化はこちらのクラスで行う
-//******************************************************
-public class UserData
-{
-  public string userName;
-  public int userLv;
-  public int curExp;
-  public int money;
-  public UserDataObject.OrganizationData[] organizationDataArray;
 }
