@@ -62,11 +62,11 @@
       Laser
     }
 
-    FloatReactiveProperty curHp;//現在HP
+    FloatReactiveProperty curHp = new FloatReactiveProperty();//現在HP
     FloatReactiveProperty curDef;//現在防御
-    FloatReactiveProperty curRapid;//現在射撃速度
+    FloatReactiveProperty curRapid = new FloatReactiveProperty();//現在射撃速度
     FloatReactiveProperty curSpd = new FloatReactiveProperty();//現在速度
-    FloatReactiveProperty curAtk;
+    FloatReactiveProperty curAtk = new FloatReactiveProperty();
 
     float correctPerDef = 1.0f;//補正%防御
     float correctPerRapid = 1.0f;//補正%
@@ -93,7 +93,15 @@
 
     private void Start()
     {
+      CurHp.Value = hp;
       CurSpd.Value = spd;
+      curAtk.Value = atk;
+      curRapid.Value = rapid;
+    }
+
+    public void CalHp(float _val)
+    {
+      CurHp.Value += _val;
     }
 
     //バフ・デバフをかけます
