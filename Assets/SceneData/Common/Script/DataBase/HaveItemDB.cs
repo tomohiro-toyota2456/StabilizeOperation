@@ -23,11 +23,6 @@
       public int haveNum;
     }
 
-    public override void Init()
-    {
-      LoadData();
-    }
-
     public void LoadData()
     {
       string json = PlayerPrefs.GetString(key);
@@ -35,6 +30,7 @@
       if(string.IsNullOrEmpty(json))
       {
         haveItemList = new HaveItemList();
+        SaveData();
       }
 
       haveItemList = JsonUtility.FromJson<HaveItemList>(json);
@@ -80,6 +76,11 @@
       {
         haveItemList.list.Add(_data);
       }
+    }
+
+    public void DeleteData()
+    {
+      PlayerPrefs.DeleteKey(key);
     }
 
 

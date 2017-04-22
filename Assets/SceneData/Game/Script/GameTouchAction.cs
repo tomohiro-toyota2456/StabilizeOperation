@@ -8,7 +8,10 @@
   using System;
   
 
-
+  //ゲーム中に使うタッチ用アクション
+  //タップ
+  //ピンチイン・アウト
+  //ドラッグ（シングルタップのみ)
   public class GameTouchAction : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDragHandler,IPointerClickHandler
   {
     [SerializeField]
@@ -62,6 +65,7 @@
       return ans;
     }
 
+    //ドラッグ開始時
     public void OnBeginDrag(PointerEventData _data)
     {
       screenSize.x = screenObj.rect.width;
@@ -71,6 +75,7 @@
       image.gameObject.SetActive(true);
     }
 
+    //ドラッグ中
     public void OnDrag(PointerEventData _data)
     {
       Vector2 stPos;
@@ -100,6 +105,7 @@
 
     }
 
+    //ドラッグ終了時
     public void OnEndDrag(PointerEventData _data)
     {
       if(endDragDel != null )
@@ -113,6 +119,7 @@
       image.gameObject.SetActive(false);
     }
 
+    //クリック時
     public void OnPointerClick(PointerEventData _data)
     {
       if (isDrag)

@@ -70,7 +70,7 @@
     [SerializeField]
     int shotSpd;//弾の速さ
     [SerializeField]
-    float[] regist = new float[3];//耐性
+    float[] resistance = new float[3];//耐性
     [SerializeField]
     int fov;//視野　ロボからの視界半径とする？
     [SerializeField]
@@ -94,7 +94,7 @@
     public int Load   { get { return load; }   set { load = value; } }
     public int Weight { get { return weight; } set { weight = value; } }
     public int Fov    { get { return fov; }    set { fov = value; } }
-    public float[] Regist { get { return regist; } set { regist = value; } }
+    public float[] Resistance { get { return resistance; } set { resistance = value; } }
     public string Dist { get { return dist; } set { dist = value; } }
     public string Name { get { return name; } set { name = value; } }
     public int CtPer { get { return ctPer; }set { ctPer = value; } }

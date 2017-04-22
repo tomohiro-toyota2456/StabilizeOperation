@@ -33,6 +33,7 @@ public class UserDataObject : ScriptableObject
     public string weponId;
     public string legId;
     public string accessoryId;
+    public string unitName;
   }
 
   public string UserName { get { return userName; } }

@@ -13,7 +13,7 @@
     [SerializeField]
     UserDataObject initUserData;
 
-    UserData userData = null;
+    UserData userData;
 
     readonly string key = "oJFPOWHFO2e{}QFHJwq";
 
@@ -21,13 +21,14 @@
     //UserData
     //データ保持用　Josn化はこちらのクラスで行う
     //******************************************************
-    public class UserData
+    public struct UserData
     {
       public string userName;
       public int userLv;
       public int curExp;
       public int money;
-      public UserDataObject.OrganizationData[] organizationDataArray;
+      public UserDataObject.OrganizationData[] deckDataArray;
+      public int selectDeckId;
     }
 
     public bool CheckExistData()
@@ -56,7 +57,7 @@
         userData.userName = initUserData.UserName;
         userData.userLv = initUserData.UserLv;
         userData.money = initUserData.Money;
-        userData.organizationDataArray = initUserData.OrganizationDataArray;
+        userData.deckDataArray = initUserData.OrganizationDataArray;
         userData.curExp = 0;
 
         json = JsonUtility.ToJson(userData);
@@ -70,12 +71,9 @@
 
     public void SaveUserData()
     {
-      if(userData !=null)
-      {
-        string json = JsonUtility.ToJson(userData);
-        PlayerPrefs.SetString(key, json);
-        PlayerPrefs.Save();
-      }
+      string json = JsonUtility.ToJson(userData);
+      PlayerPrefs.SetString(key, json);
+      PlayerPrefs.Save();
     }
 
     public string GetUserName()
@@ -107,14 +105,15 @@
     {
       userData.money = _money;
     }
-
+    //******************************************************
+    //GetDeck
+    //ユニット構成デッキを取得
+    //******************************************************
     public UserDataObject.OrganizationData[] GetDeck()
     {
-      if (userData.organizationDataArray != null )
+      if (userData.deckDataArray != null)
       {
-        UserDataObject.OrganizationData[] array = null;
-        userData.organizationDataArray.CopyTo(array, 0);
-        return array;
+        return userData.deckDataArray;
       }
 
       //データがないor不正なので
@@ -122,11 +121,27 @@
 
       return deck;
     }
+    //******************************************************
+    //GetUsingDeck
+    //使用しているデッキを取得
+    //******************************************************
+    public UserDataObject.OrganizationData GetUsingDeck()
+    {
+      if(userData.deckDataArray != null)
+      {
+        return userData.deckDataArray[userData.selectDeckId];
+      }
 
+      return null;
+    }
+    //******************************************************
+    //SetDeck
+    //デッキデータをセットする
+    //******************************************************
     public void SetDeck(UserDataObject.OrganizationData[] _deckArray)
     {
       if (_deckArray != null)
-      userData.organizationDataArray = _deckArray;
+      userData.deckDataArray = _deckArray;
     }
   }
 }

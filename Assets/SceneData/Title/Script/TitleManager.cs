@@ -15,23 +15,54 @@
     [SerializeField]
     Button DeleteUserData;
 
+    HavePartsDB havePartDB;
+    HaveItemDB haveItemDB;
+    UserDB userDB;
+
+
     // Use this for initialization
     void Start()
     {
-      SceneChanger.Instance.IsInitialize = true;
+      //DB取得
+      havePartDB = DataBaseManager.Instance.GetDataBase<HavePartsDB>();
+      haveItemDB = DataBaseManager.Instance.GetDataBase<HaveItemDB>();
+      userDB = DataBaseManager.Instance.GetDataBase<UserDB>();
 
+      //開始ボタン
       startButton.OnClickAsObservable()
         .Subscribe(_ => 
         {
-          SceneChanger.Instance.ChangeScene("Game");
+          Load();
         }).AddTo(gameObject);
 
+      //データ削除ボタン
       DeleteUserData.OnClickAsObservable()
         .Subscribe(_ =>
         {
-          DataBaseManager.Instance.GetDataBase<UserDB>().DeleteData();
+          DeleteData();
         }).AddTo(gameObject);
 
+      SceneChanger.Instance.IsInitialize = true;
+    }
+
+    void Load()
+    {
+      bool isExistUserData = userDB.CheckExistData();
+
+      userDB.LoadUserData();
+      havePartDB.LoadData();
+      haveItemDB.LoadData();
+
+      //ここで分岐
+      SceneChanger.Instance.ChangeScene("Game");
+
+    } 
+
+    void DeleteData()
+    {
+      havePartDB.DeleteData();
+      haveItemDB.DeleteData();
+      userDB.DeleteData();
     }
   }
 }

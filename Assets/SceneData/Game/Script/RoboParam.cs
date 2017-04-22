@@ -32,11 +32,13 @@
     [SerializeField]
     int fov;//視野　ロボからの視界半径とする？
     [SerializeField]
-    float[] Resistance = new float[3];
+    float[] resistance = new float[3];
     [SerializeField]
     LegType legType;
     [SerializeField]
     ShotType shotType;
+    [SerializeField]
+    float ctPer;
 
 
 
@@ -52,7 +54,7 @@
     public enum LegType
     {
       Land,
-      Sky,
+      Air,
     }
 
     public enum ShotType
@@ -84,12 +86,17 @@
     public int Load { get { return load; } set { load = value; } }
     public int Weight { get { return weight; } set { weight = value; } }
     public int Fov { get { return fov; } set { fov = value; } }
+    public float[] Resistance { get { return resistance; } set { resistance = value; } }
+    public float CtPer { get { return CtPer; }set { ctPer = value; } }
 
     public FloatReactiveProperty CurHp { get { return curHp; } }
     public FloatReactiveProperty CurDef { get { return curDef; } }
     public FloatReactiveProperty CurRapid { get { return curRapid; } }
     public FloatReactiveProperty CurSpd { get { return curSpd; } }
     public FloatReactiveProperty CurAtk { get { return curAtk; } }
+
+    public LegType Leg { get { return legType; }set { legType = value; } }
+    public ShotType Shot { get { return shotType; }set { shotType = value; } }
 
     private void Start()
     {

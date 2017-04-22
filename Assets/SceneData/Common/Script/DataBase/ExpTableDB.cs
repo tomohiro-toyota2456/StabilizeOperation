@@ -73,11 +73,11 @@
       return master.AccessoryPartExpList.First(data => data.Id == _id);
     }
 
-    ParamData GetParam(string _id,int curLv)
+    public ParamData GetParam(string _id,int curLv)
     {
       ParamData data = new ParamData();
 
-      float t = CompletionFunctions.LvConvertCompVal(curLv, GameConstParam.maxLv);
+      float t = CompletionFunctions.LvConvertCompVal(curLv, GameCommon.maxLv);
 
       ExpTableData tData = GetData(_id);
 

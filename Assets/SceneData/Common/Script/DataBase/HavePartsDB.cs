@@ -10,6 +10,9 @@
   //************************************************************
   public class HavePartsDB : DataBase
   {
+    [SerializeField]
+    HavePartsInitData initData;
+
     //セーブ用キー群
     readonly string headPartKey = "odjwjfpqkoejgpo[wekg@";
     readonly string weponPartKey = "fgnjienhgingegmneogn";
@@ -36,12 +39,6 @@
       public List<HavePartData> partList;
     } 
 
-    //初期化
-    public override void Init()
-    {
-      LoadData();
-    }
-
     //パーツ所持データの一括ロード
     public void LoadData()
     {
@@ -51,6 +48,20 @@
       {
         headParts = JsonUtility.FromJson<HaveParts>(json);
       }
+      else
+      {
+        headParts = new HaveParts();
+        headParts.partList = new List<HavePartData>();
+
+        //初期所持データを入れていく
+        HavePartData data = new HavePartData();
+        data.id = initData.HeadPartId.Substring(0);
+        data.lv = 1;
+        data.curExp = 0;
+
+        SetHeadData(data);
+        
+      }
 
       json = PlayerPrefs.GetString(weponPartKey);
 
@@ -58,12 +69,41 @@
       {
         weponParts = JsonUtility.FromJson<HaveParts>(json);
       }
+      else
+      {
+        weponParts = new HaveParts();
+        weponParts.partList = new List<HavePartData>();
+
+        //初期所持データを入れていく
+        HavePartData data = new HavePartData();
+        data.id = initData.WeponPartId.Substring(0);
+        data.lv = 1;
+        data.curExp = 0;
+
+        SetWeponData(data);
+
+      }
 
       json = PlayerPrefs.GetString(legPartKey);
+
 
       if (!string.IsNullOrEmpty(json))
       {
         legParts = JsonUtility.FromJson<HaveParts>(json);
+      }
+      else
+      {
+        legParts = new HaveParts();
+        legParts.partList = new List<HavePartData>();
+
+        //初期所持データを入れていく
+        HavePartData data = new HavePartData();
+        data.id = initData.LegPartId.Substring(0);
+        data.lv = 1;
+        data.curExp = 0;
+
+        SetLegData(data);
+
       }
 
       json = PlayerPrefs.GetString(accessoryPartKey);
@@ -72,12 +112,19 @@
       {
         accessoryParts = JsonUtility.FromJson<HaveParts>(json);
       }
+      else
+      {
+        accessoryParts = new HaveParts();
+        accessoryParts.partList = new List<HavePartData>();
+      }
+
+      SaveData();
     }
 
     //データ追加
     public void AddData(HavePartData _data)
     {
-      string headStr = _data.id.Substring(0);
+      string headStr = _data.id.Substring(0,1);
 
       switch(headStr)
       {
@@ -103,7 +150,7 @@
     //データゲット
     public HavePartData GetData(string _id)
     {
-      string headStr = _id.Substring(0);
+      string headStr = _id.Substring(0,1);
 
       HavePartData data;
       switch(headStr)
@@ -179,7 +226,7 @@
 
     public void SetData(HavePartData _data)
     {
-      string headStr = _data.id.Substring(0);
+      string headStr = _data.id.Substring(0,1);
       switch (headStr)
       {
         case "h":
@@ -207,9 +254,13 @@
         if(_data.id == data.id)
         {
           headParts.partList[i]= _data;
-          break;
+          return;
         }
       }
+
+      //新規取得の場合は追加
+      headParts.partList.Add(_data);
+
     }
 
     public void SetWeponData(HavePartData _data)
@@ -220,9 +271,12 @@
         if (_data.id == data.id)
         {
           weponParts.partList[i] = _data;
-          break;
+          return;
         }
       }
+
+      //新規取得の場合は追加
+      weponParts.partList.Add(_data);
     }
 
     public void SetLegData(HavePartData _data)
@@ -233,9 +287,12 @@
         if (_data.id == data.id)
         {
           legParts.partList[i] = _data;
-          break;
+          return;
         }
       }
+
+      //新規取得の場合は追加
+      legParts.partList.Add(_data);
     }
 
     public void SetAccessoryData(HavePartData _data)
@@ -246,9 +303,12 @@
         if (_data.id == data.id)
         {
           accessoryParts.partList[i] = _data;
-          break;
+          return;
         }
       }
+
+      //新規取得の場合は追
+      accessoryParts.partList.Add(_data);
     }
 
     #endregion
@@ -345,6 +405,13 @@
     }
     #endregion
 
+    public void DeleteData()
+    {
+      PlayerPrefs.DeleteKey(headPartKey);
+      PlayerPrefs.DeleteKey(weponPartKey);
+      PlayerPrefs.DeleteKey(legPartKey);
+      PlayerPrefs.DeleteKey(accessoryPartKey);
+    }
 
   }
 }

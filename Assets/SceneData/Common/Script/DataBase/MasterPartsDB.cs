@@ -19,6 +19,7 @@
       masterClone = Instantiate(masterPartsData);
     }
 
+    //パーツに関係なくデータ取得
     public RoboPartParam GetData(string _id)
     {
       string first = _id.Substring(0, 1);
@@ -47,6 +48,7 @@
 
     }
 
+    //各パーツに即したデータ取得
     public RoboPartParam GetHeadData(string _id)
     {
       var part = masterClone.HeadDataList.First(data=> data.Id == _id);

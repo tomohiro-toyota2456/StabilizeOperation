@@ -201,7 +201,7 @@
         partData.Weight = weight;
         partData.Cost = cost;
         partData.Fov = fov;
-        partData.Regist = regists;
+        partData.Resistance = regists;
         partData.Dist = text;
         partData.RoboType = RoboPartParam.PartType.Head;
 
@@ -549,16 +549,12 @@
       {
         case "h":
           return "Head";
-          break;
-        case "w":
+          case "w":
           return "Wepon";
-          break;
         case "l":
           return "Leg";
-          break;
         case "a":
-          return "Accessory";
-          break;       
+          return "Accessory";  
       }
 
       Debug.Log("ID Wrong!!!");
