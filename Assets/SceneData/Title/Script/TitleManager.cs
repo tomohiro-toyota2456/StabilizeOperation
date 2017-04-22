@@ -13,7 +13,11 @@
     [SerializeField]
     Button startButton;
     [SerializeField]
-    Button DeleteUserData;
+    Button deleteUserData;
+    [SerializeField]
+    Button popupTest;
+    [SerializeField]
+    SimplePopup simplePopup;
 
     HavePartsDB havePartDB;
     HaveItemDB haveItemDB;
@@ -36,11 +40,22 @@
         }).AddTo(gameObject);
 
       //データ削除ボタン
-      DeleteUserData.OnClickAsObservable()
+      deleteUserData.OnClickAsObservable()
         .Subscribe(_ =>
         {
           DeleteData();
         }).AddTo(gameObject);
+
+      //pptest
+      popupTest.OnClickAsObservable()
+        .Subscribe(_ =>
+        {
+          var pp = PopupManager.Instance.Create<SimplePopup>(simplePopup);
+          pp.SetTitle("TestTitle!!!!");
+          pp.SetDist("This is TestPopup");
+          PopupManager.Instance.OpenPopup(pp, null);
+        }).AddTo(gameObject);
+
 
       SceneChanger.Instance.IsInitialize = true;
     }
