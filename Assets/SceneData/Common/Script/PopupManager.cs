@@ -18,7 +18,7 @@
 
       obj = Instantiate(_obj);
       obj.gameObject.transform.SetParent(root.transform);
-      obj.gameObject.transform.localScale = new Vector3(1, 1, 1);
+      obj.gameObject.transform.localScale = new Vector3(0, 0, 0);
       obj.gameObject.transform.localPosition = new Vector3(0, 0, 0);
 
       return obj;
