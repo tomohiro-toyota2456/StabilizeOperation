@@ -18,6 +18,8 @@
     Button popupTest;
     [SerializeField]
     SimplePopup simplePopup;
+    [SerializeField]
+    PagePopup pagePopup;
 
     HavePartsDB havePartDB;
     HaveItemDB haveItemDB;
@@ -50,10 +52,15 @@
       popupTest.OnClickAsObservable()
         .Subscribe(_ =>
         {
-          var pp = PopupManager.Instance.Create<SimplePopup>(simplePopup);
-          pp.SetTitle("TestTitle!!!!");
-          pp.SetDist("This is TestPopup");
+          /*
+           var pp = PopupManager.Instance.Create<SimplePopup>(simplePopup);
+           pp.SetTitle("TestTitle!!!!");
+           pp.SetDist("This is TestPopup");*/
+
+          var pp = PopupManager.Instance.Create<PagePopup>(pagePopup);
+          pp.SetData(Resources.Load<PagePopupData>("PagePopupData"));
           PopupManager.Instance.OpenPopup(pp, null);
+          
         }).AddTo(gameObject);
 
 

@@ -5,7 +5,7 @@ using UnityEngine;
 //UserDataObject
 //初期データ用オブジェクト
 //******************************************************
-[CreateAssetMenu(fileName ="UserDataObject",menuName ="CreateScriptableObject/UserDataObject",order = 100)]
+[CreateAssetMenu(fileName ="UserDataObject",menuName ="ScriptableObject/UserDataObject",order = 100)]
 public class UserDataObject : ScriptableObject
 {
   [SerializeField]
