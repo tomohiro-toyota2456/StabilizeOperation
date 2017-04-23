@@ -23,7 +23,6 @@ public class TestRoboFactory : MonoBehaviour
 
   private void Update()
   {
-    Debug.Log("TCount"+Input.touchCount);
     Vector3 enemyBase = new Vector3(0, 0.41f, 40.52f);
     for(int i = 0; i < objList.Count; i++)
     {
