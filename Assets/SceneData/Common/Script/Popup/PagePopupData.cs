@@ -27,6 +27,13 @@
 
       int len = 0;
 
+      //データがない場合
+      if(dataArray == null)
+      {
+        dataArray = new Datas[_elementNum];
+        return;
+      }
+
       len = _elementNum < dataArray.Length  ? _elementNum : dataArray.Length;
 
       for(int i = 0; i < len;i++)
