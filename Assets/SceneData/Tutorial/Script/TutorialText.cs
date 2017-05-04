@@ -32,8 +32,7 @@ namespace Tutorial
 				}
 				else if (currentLine >= text_.Length && Input.GetMouseButtonDown (0)) {
 					if (Manager != null) {
-						Manager.SendMessage ("SetTextEvent", currentEventNum);
-						Debug.Log ("TEST");
+						Manager.SendMessage ("EndTextEvent");
 					}
 				}
 			} else {

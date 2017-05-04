@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
 using UniRx.Triggers;
-
+using Common.Camera;
 
 namespace Tutorial
 {
@@ -37,9 +37,28 @@ public class TutorialHomeManager : MonoBehaviour {
 			}
 		}
 
-		void SetTextEvent()
+		void SetTextEvent(int seq)
 		{
+			switch (seq) {
 
+			case 0:
+				Camera.main.gameObject.GetComponent<CameraShake> ().ShakeStart ();
+				//mainCan.GetComponent<CameraShake> ().ShakeStart ();
+				break;
+
+			case 1:
+
+				break;
+			}
+		}
+
+		void EndTextEvent()
+		{
+			textImage.gameObject.SetActive (false);
+			SetBlockMask (false);
+			maskImage.gameObject.SetActive (true);
+			frameImage.gameObject.SetActive (true);
+			arrowImage.gameObject.SetActive (true);
 		}
 
 		void SetTextField()
@@ -48,6 +67,7 @@ public class TutorialHomeManager : MonoBehaviour {
 			textImage.GetComponent<TutorialText> ().textEventNum = 4;
 			textImage.GetComponent<TutorialText> ().ManagerSet = this.gameObject;
 		}
+			
 
 		//文字送り用テキスト
 		[SerializeField]
@@ -69,7 +89,6 @@ public class TutorialHomeManager : MonoBehaviour {
 		[SerializeField]
 		private Image blockImage;
 
-		private bool isCameraShake;
 }
 
 
