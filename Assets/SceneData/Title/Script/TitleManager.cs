@@ -76,7 +76,7 @@
       haveItemDB.LoadData();
 
       //ここで分岐
-      SceneChanger.Instance.ChangeScene("Game");
+      SceneChanger.Instance.ChangeScene("Home");
 
     } 
 

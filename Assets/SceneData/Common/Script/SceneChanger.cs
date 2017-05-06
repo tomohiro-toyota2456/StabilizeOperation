@@ -62,7 +62,7 @@
             //非同期読み込み
             var op = SceneManager.LoadSceneAsync(_sceneName, LoadSceneMode.Additive);
 
-            while(!op.isDone && !isInitialize)
+            while(!op.isDone || !isInitialize)
             {
                 yield return null;      
             }

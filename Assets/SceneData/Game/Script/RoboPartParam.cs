@@ -38,7 +38,45 @@
     public enum AddEffectType
     {
       None,
+      BufAtk,
+      DebufAtk,
+      BufDef,
+      DebufDef,
+      BufSpd,
+      DebufSpd,
+      BufRapid,
+      DebufRapid,
+      BufHp,
+      DebufHp,
 
+    }
+
+    //効果率
+    public enum EffectValueType
+    {
+      //割合系%
+      None,
+      Percent2,
+      Percent5,
+      Percent10,
+      Percent20,
+
+      //固定値
+      Fixed10,
+      Fixed20,
+      Fixed50,
+      Fixed80,
+      Fixed100,
+    }
+
+    public enum EffectTimeType
+    {
+      None,
+      Sec2,
+      Sec4,
+      Sec5,
+      Sec10,
+      Sec20,
     }
 
     [SerializeField]
@@ -49,6 +87,10 @@
     PartAttribute partAttribute;//部位属性
     [SerializeField]
     AddEffectType addEffectType;//追加効果
+    [SerializeField]
+    EffectValueType effectValueType;//追加効果量
+    [SerializeField]
+    EffectTimeType effectTimeType;//追加効果時間
     [SerializeField]
     int hp;//体力
     [SerializeField]
@@ -102,5 +144,7 @@
     public PartType RoboType { get { return partType; }set { partType = value; } }
     public PartAttribute RoboAttribute { get { return partAttribute; } set { partAttribute = value; } }
     public AddEffectType EffectType { get { return addEffectType; } set { addEffectType = value; } }
+    public EffectValueType EffectVType { get { return effectValueType; }set { effectValueType = value; } }
+    public EffectTimeType EffectTType { get { return effectTimeType; }set { effectTimeType = value; } }
   }
 }

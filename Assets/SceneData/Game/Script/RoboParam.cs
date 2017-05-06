@@ -5,6 +5,7 @@
   using UnityEngine;
   using UniRx;
   using UniRx.Triggers;
+  using System;
   //****************************************
   //RoboParam
   //ロボットのパラメータ定義
@@ -39,24 +40,52 @@
     ShotType shotType;
     [SerializeField]
     float ctPer;
+    [SerializeField]
+    ShotEffectData shotEffectData = new ShotEffectData();
 
+    EffectData[] debuffArray = new EffectData[ParamType.Max.GetHashCode()];
+    EffectData[] buffArray = new EffectData[ParamType.Max.GetHashCode()];
 
+    float[] correctPerArray = new float[ParamType.Max.GetHashCode()];
 
+    EffectData buffHp = new EffectData();
+    EffectData debuffHp = new EffectData();
+
+    //バフデバフ管理用
+    struct EffectData
+    {
+      public float val;
+      public IDisposable dispose;
+    }
+
+    [System.Serializable]
+    public struct ShotEffectData
+    {
+      public RoboPartParam.EffectValueType vType;
+      public RoboPartParam.EffectTimeType tType;
+      public ParamType paramType;
+      public bool isBuf;
+    }
+
+    //
     public enum ParamType
     {
-      Hp,
+      Atk,
       Def,
       Rapid,
       Spd,
-      Atk
+      Max,
+      Hp,//配列にはいれたくない
     }
-
+    
+    //脚部タイプ
     public enum LegType
     {
       Land,
       Air,
     }
 
+    //ショットの形式
     public enum ShotType
     {
       Bullet,
@@ -65,15 +94,10 @@
     }
 
     FloatReactiveProperty curHp = new FloatReactiveProperty();//現在HP
-    FloatReactiveProperty curDef;//現在防御
+    FloatReactiveProperty curDef = new FloatReactiveProperty();
     FloatReactiveProperty curRapid = new FloatReactiveProperty();//現在射撃速度
     FloatReactiveProperty curSpd = new FloatReactiveProperty();//現在速度
     FloatReactiveProperty curAtk = new FloatReactiveProperty();
-
-    float correctPerDef = 1.0f;//補正%防御
-    float correctPerRapid = 1.0f;//補正%
-    float correctPerSpd = 1.0f;//補正速度
-    float correctPerAtk = 1.0f;
 
     //プロパティ群
     public int Hp { get { return hp; } set { hp = value; } }
@@ -87,7 +111,7 @@
     public int Weight { get { return weight; } set { weight = value; } }
     public int Fov { get { return fov; } set { fov = value; } }
     public float[] Resistance { get { return resistance; } set { resistance = value; } }
-    public float CtPer { get { return CtPer; }set { ctPer = value; } }
+    public float CtPer { get { return ctPer; }set { ctPer = value; } }
 
     public FloatReactiveProperty CurHp { get { return curHp; } }
     public FloatReactiveProperty CurDef { get { return curDef; } }
@@ -97,6 +121,7 @@
 
     public LegType Leg { get { return legType; }set { legType = value; } }
     public ShotType Shot { get { return shotType; }set { shotType = value; } }
+    public ShotEffectData ShotEffect { get { return shotEffectData; } set { shotEffectData = value; } }
 
     private void Start()
     {
@@ -104,6 +129,11 @@
       CurSpd.Value = spd;
       curAtk.Value = atk;
       curRapid.Value = rapid;
+
+      for(int i = 0; i < correctPerArray.Length;i++)
+      {
+        correctPerArray[i] = 1.0f;
+      }
     }
 
     public void CalHp(float _val)
@@ -111,72 +141,253 @@
       CurHp.Value += _val;
     }
 
-    //バフ・デバフをかけます
-    //かける対象パラメータ　数値(2で２倍 0.5で半分) 時間 秒
-    public void CreateEffectParam(ParamType _type,float _value,float _time,float _timePriod = 1.0f)
+    //バフを追加
+    public void AddBuff(ParamType _type,float _val,float _time)
+    {
+      float timer = 0;
+
+      _val = _val <= 0 ? _val * -1 : _val;//引数がマイナス値の場合は補正する
+
+      int idx = _type.GetHashCode();
+      var dispose = buffArray[idx].dispose;
+
+      if(dispose == null)
+      {
+        correctPerArray[idx] += _val;
+        SetCurParam(_type);
+
+        dispose = this.UpdateAsObservable()
+                  .Where(_ => true)
+                  .TakeWhile(_ => timer <= _time)
+                  .Subscribe(_ =>
+                  {
+                    timer += Time.deltaTime;
+                  },
+                  () =>
+                  {
+                    correctPerArray[idx] -= _val;
+                    SetCurParam(_type);
+                    buffArray[idx].dispose = null;
+                  });
+
+        buffArray[idx].dispose = dispose;
+        buffArray[idx].val = _val;
+      }
+      else if(buffArray[idx].val < _val)
+      {
+        buffArray[idx].dispose.Dispose();
+        correctPerArray[idx] -= buffArray[idx].val;
+
+        correctPerArray[idx] += _val;
+        SetCurParam(_type);
+
+        dispose = this.UpdateAsObservable()
+                  .Where(_ => true)
+                  .TakeWhile(_ => timer <= _time)
+                  .Subscribe(_ =>
+                  {
+                    timer += Time.deltaTime;
+                  },
+                  () =>
+                  {
+                    correctPerArray[idx] -= _val;
+                    SetCurParam(_type);
+                    buffArray[idx].dispose = null;
+                  });
+
+        buffArray[idx].dispose = dispose;
+        buffArray[idx].val = _val;
+      }
+
+    }
+
+    //デバフを追加
+    public void AddDebuff(ParamType _type, float _val, float _time)
+    {
+      float timer = 0;
+
+      _val = _val >= 0 ? _val * -1 : _val;//引数がマイナス値の場合は補正する
+
+      int idx = _type.GetHashCode();
+      var dispose = debuffArray[idx].dispose;
+
+      if (dispose == null)
+      {
+        correctPerArray[idx] += _val;
+        SetCurParam(_type);
+        dispose = this.UpdateAsObservable()
+                  .Where(_ => true)
+                  .TakeWhile(_ => timer <= _time)
+                  .Subscribe(_ =>
+                  {
+                    timer += Time.deltaTime;
+                  },
+                  () =>
+                  {
+                    correctPerArray[idx] -= _val;
+                    SetCurParam(_type);
+                    debuffArray[idx].dispose = null;
+                  });
+
+        debuffArray[idx].dispose = dispose;
+        debuffArray[idx].val = _val;
+      }
+      else if (buffArray[idx].val < _val)
+      {
+        debuffArray[idx].dispose.Dispose();
+        correctPerArray[idx] -= debuffArray[idx].val;
+
+        correctPerArray[idx] += _val;
+        SetCurParam(_type);
+
+        dispose = this.UpdateAsObservable()
+                  .Where(_ => true)
+                  .TakeWhile(_ => timer <= _time)
+                  .Subscribe(_ =>
+                  {
+                    timer += Time.deltaTime;
+                  },
+                  () =>
+                  {
+                    correctPerArray[idx] -= _val;
+                    SetCurParam(_type);
+                    debuffArray[idx].dispose = null;
+                  });
+
+        debuffArray[idx].dispose = dispose;
+        debuffArray[idx].val = _val;
+      }
+
+    }
+
+    //Hpバフを追加
+    public void AddBuffHp(float _val,float _time)
+    {
+
+      _val = _val <= 0 ? _val * -1 : _val;//引数がマイナス値の場合は補正する
+      var dispose = buffHp.dispose;
+      float timer = 0;
+      if(dispose == null)
+      {
+        buffHp.dispose = Observable.Interval(TimeSpan.FromSeconds(_time))
+          .TakeWhile(_=>timer <= _time)
+          .Subscribe(val =>
+          {
+            timer += Time.deltaTime;
+            curHp.Value += _val;
+          },
+          ()=>
+          {
+            buffHp.dispose = null;
+          }).AddTo(gameObject);
+      }
+      else if(buffHp.val < _val)
+      {
+        buffHp.dispose.Dispose();
+        buffHp.val = _val;
+
+        buffHp.dispose = Observable.Interval(TimeSpan.FromSeconds(_time))
+          .TakeWhile(_ => timer <= _time)
+          .Subscribe(val =>
+          {
+            timer += Time.deltaTime;
+            curHp.Value += _val;
+          },
+          () =>
+          {
+            buffHp.dispose = null;
+          }).AddTo(gameObject);
+      }
+
+    }
+
+    //Hpデバフを追加
+    public void AddDebuffHp(float _val, float _time)
+    {
+      _val = _val >= 0 ? _val * -1 : _val;//引数がプラスの場合マイナスにする
+      var dispose = buffHp.dispose;
+
+      float damageInterval = Common.GameCommon.DamageInterval;
+
+      int damageCount = (int)(_time / damageInterval);//ダメージ間隔と継続時間から発生回数を算出(端数切捨て)
+      if (dispose == null)
+      {
+        buffHp.dispose = Observable.Interval(TimeSpan.FromSeconds(damageInterval))//Intervalは初回0から回数をカウントアップしてくれる
+          .TakeWhile(cnt => cnt < damageCount)//カウントが規定数超えるまで継続
+          .Subscribe(val =>
+          {
+            curHp.Value += _val;
+          },
+          () =>
+          {
+            buffHp.dispose = null;
+          }).AddTo(gameObject);
+      }
+      else if (buffHp.val < _val)
+      {
+        buffHp.dispose.Dispose();
+        buffHp.val = _val;
+
+        buffHp.dispose = Observable.Interval(TimeSpan.FromSeconds(damageInterval))
+          .TakeWhile(cnt => cnt< damageCount)
+          .Subscribe(val =>
+          {
+            curHp.Value += _val;
+          },
+          () =>
+          {
+            buffHp.dispose = null;
+          }).AddTo(gameObject);
+      }
+
+    }
+
+    public void ResetEffect()
+    {
+      for(int i = 0;i < buffArray.Length;i++)
+      {
+        if (buffArray[i].dispose != null)
+          buffArray[i].dispose.Dispose();
+
+        if (debuffArray[i].dispose != null)
+          debuffArray[i].dispose.Dispose();
+
+        correctPerArray[i] = 1.0f;
+      }
+
+      if(buffHp.dispose != null)
+      {
+        buffHp.dispose.Dispose();
+      }
+
+      if (debuffHp.dispose != null)
+      {
+        debuffHp.dispose.Dispose();
+      }
+    }
+
+    void SetCurParam(ParamType _type)
     {
       switch(_type)
       {
-        case ParamType.Hp:
-
-          Observable.Timer(System.TimeSpan.FromSeconds(0), System.TimeSpan.FromSeconds(_timePriod))
-            .TakeWhile(_ => _ < _time)
-            .Subscribe(_ =>
-            {
-              CurHp.Value += _value;
-            }).AddTo(gameObject);
-
+        case ParamType.Atk:
+          curAtk.Value = atk * correctPerArray[_type.GetHashCode()];
           break;
 
         case ParamType.Def:
-
-          correctPerDef += _value;
-          CurDef.Value = Def * correctPerDef;
-          Observable.Timer(System.TimeSpan.FromSeconds(_time))
-            .Subscribe(_ => 
-            {
-              correctPerDef += -_value;
-              CurDef.Value = Def * correctPerDef;
-            }).AddTo(gameObject);
-
-
+          curDef.Value = def * correctPerArray[_type.GetHashCode()];
           break;
 
         case ParamType.Rapid:
-          correctPerRapid += _value;
-          CurRapid.Value = Rapid * correctPerRapid;
-          Observable.Timer(System.TimeSpan.FromSeconds(_time))
-            .Subscribe(_ =>
-            {
-              correctPerRapid += -_value;
-              CurRapid.Value = Rapid * correctPerRapid;
-            }).AddTo(gameObject);
-
+          curRapid.Value = rapid * correctPerArray[_type.GetHashCode()];
           break;
 
         case ParamType.Spd:
-          correctPerSpd += _value;
-          CurSpd.Value = Spd * correctPerSpd;
-          Observable.Timer(System.TimeSpan.FromSeconds(_time))
-            .Subscribe(_ =>
-            {
-              correctPerSpd += -_value;
-              CurSpd.Value = spd * correctPerSpd;
-            }).AddTo(gameObject); 
-          break;
-
-        case ParamType.Atk:
-          correctPerAtk += _value;
-          CurAtk.Value = atk * correctPerAtk;
-          Observable.Timer(System.TimeSpan.FromSeconds(_time))
-            .Subscribe(_ =>
-            {
-              correctPerAtk += -_value;
-              CurAtk.Value = atk * correctPerAtk;
-            }).AddTo(gameObject); 
-
+          curSpd.Value = spd * correctPerArray[_type.GetHashCode()];
           break;
       }
     }
+
+
   }
 }

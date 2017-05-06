@@ -4,6 +4,7 @@
   using System.Collections.Generic;
   using UnityEngine;
   using UniRx;
+  using UnityEngine.AI;
 
   public class RoboMover : MonoBehaviour
   { 
@@ -11,6 +12,9 @@
     Rigidbody rbody;
     [SerializeField]
     RoboParam roboParam;
+    [SerializeField]
+    NavMeshAgent agent;//地上ユニットのみ使う予定
+
 
     IRoboController controller;
     public IRoboController RoboController { set { controller = value; } }
@@ -20,6 +24,10 @@
     void Start()
     {
       controller = GetComponent<IRoboController>();
+      roboParam.CurSpd.Subscribe(_ =>
+      {
+        agent.speed = _;
+      }).AddTo(gameObject);
 
       IObservable<Vector3> ob = controller.Move();
 
@@ -30,9 +38,10 @@
           {
             if (_.magnitude != 0)
             {
-              transform.rotation = Quaternion.LookRotation(_);
+              //transform.rotation = Quaternion.LookRotation(_);
+              agent.SetDestination(_);
             }
-            rbody.velocity = roboParam.CurSpd.Value * _;
+           //rbody.velocity = roboParam.CurSpd.Value * _;
           });
       }
     }

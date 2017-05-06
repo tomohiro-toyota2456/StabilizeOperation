@@ -243,9 +243,13 @@
         int cost = int.Parse(_excelReader.GetCellData(cnt, 8));
         int range = int.Parse(_excelReader.GetCellData(cnt, 9));
         int shotType = int.Parse(_excelReader.GetCellData(cnt, 10));
-        int addEffectType = int.Parse(_excelReader.GetCellData(cnt, 11));
+        string addEffectType = _excelReader.GetCellData(cnt, 11);
         string text = _excelReader.GetCellData(cnt, 12);
         int ctPer = int.Parse(_excelReader.GetCellData(cnt, 13));
+        string targetParam = _excelReader.GetCellData(cnt, 14);
+        string upDown = _excelReader.GetCellData(cnt, 15);
+        string effectVal = _excelReader.GetCellData(cnt, 16);
+        string effectTime = _excelReader.GetCellData(cnt, 17);
 
         partData.Name = name;
         partData.Id = id;
@@ -257,7 +261,9 @@
         partData.Weight = weight;
         partData.Cost = cost;
         partData.Range = range;
-        partData.EffectType = (RoboPartParam.AddEffectType)addEffectType;
+        partData.EffectType = ConvertAddEffectTypeFromStr(addEffectType, targetParam, upDown);
+        partData.EffectVType = ConvertEffectValueTypeFromStr(effectVal);
+        partData.EffectTType = ConvertEffectTimeTypeFromStr(effectTime); 
         partData.RoboAttribute = (RoboPartParam.PartAttribute)(10 + shotType);
         partData.Dist = text;
         partData.RoboType = RoboPartParam.PartType.Wepon;
@@ -383,6 +389,115 @@
       }
 
       return accessoryList;
+    }
+
+    static RoboPartParam.AddEffectType ConvertAddEffectTypeFromStr(string _addEffectStr,string _targetParamStr,string _upDownStr)
+    {
+      RoboPartParam.AddEffectType type = RoboPartParam.AddEffectType.None;
+      switch(_addEffectStr)
+      {
+        case "NONE":
+          type = RoboPartParam.AddEffectType.None;
+          break;
+
+        case "BUF/DEBUF":
+
+          switch(_targetParamStr)
+          {
+            case "ATK":
+
+              type = _upDownStr == "UP" ? RoboPartParam.AddEffectType.BufAtk : RoboPartParam.AddEffectType.DebufAtk;
+
+              break;
+
+            case "DEF":
+
+              type = _upDownStr == "UP" ? RoboPartParam.AddEffectType.BufDef : RoboPartParam.AddEffectType.DebufDef;
+
+              break;
+
+            case "SPD":
+
+              type = _upDownStr == "UP" ? RoboPartParam.AddEffectType.BufSpd : RoboPartParam.AddEffectType.DebufSpd;
+
+              break;
+
+            case "RAPID":
+
+              type = _upDownStr == "UP" ? RoboPartParam.AddEffectType.BufRapid : RoboPartParam.AddEffectType.DebufRapid;
+
+              break;
+
+            case "HP":
+
+              type = _upDownStr == "UP" ? RoboPartParam.AddEffectType.BufHp : RoboPartParam.AddEffectType.DebufHp;
+
+              break;
+          }
+
+          break;
+      }
+
+      return type;
+    }
+
+    static RoboPartParam.EffectValueType ConvertEffectValueTypeFromStr(string _vTypeStr)
+    {
+      RoboPartParam.EffectValueType type = RoboPartParam.EffectValueType.None;
+      switch(_vTypeStr)
+      {
+        case "PER2":
+          type = RoboPartParam.EffectValueType.Percent2;
+          break;
+        case "PER5":
+          type = RoboPartParam.EffectValueType.Percent5;
+          break;
+        case "PER10":
+          type = RoboPartParam.EffectValueType.Percent10;
+          break;
+        case "PER20":
+          type = RoboPartParam.EffectValueType.Percent20;
+          break;
+        case "FIXED10":
+          type = RoboPartParam.EffectValueType.Fixed10;
+          break;
+        case "FIXED20":
+          type = RoboPartParam.EffectValueType.Fixed20;
+          break;
+        case "FIXED50":
+          type = RoboPartParam.EffectValueType.Fixed50;
+          break;
+        case "FIXED80":
+          type = RoboPartParam.EffectValueType.Fixed80;
+          break;
+      }
+
+      return type;
+    }
+
+    static RoboPartParam.EffectTimeType ConvertEffectTimeTypeFromStr(string _tTypeStr)
+    {
+      RoboPartParam.EffectTimeType type = RoboPartParam.EffectTimeType.None;
+      switch(_tTypeStr)
+      {
+        case "SEC2":
+          type = RoboPartParam.EffectTimeType.Sec2;
+          break;
+        case "SEC4":
+          type = RoboPartParam.EffectTimeType.Sec4;
+          break;
+        case "SEC5":
+          type = RoboPartParam.EffectTimeType.Sec5;
+          break;
+        case "SEC10":
+          type = RoboPartParam.EffectTimeType.Sec10;
+          break;
+        case "SEC20":
+          type = RoboPartParam.EffectTimeType.Sec20;
+          break;
+      }
+
+      return type;
     }
 
     #endregion

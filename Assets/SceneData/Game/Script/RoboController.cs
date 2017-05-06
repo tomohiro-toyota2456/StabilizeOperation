@@ -34,6 +34,8 @@
       }
 
       moveVec.Value = Vector3.Normalize(pos);
+
+      moveVec.Value = targetPos;
     }
 
     public IObservable<Vector3> Move()

@@ -34,8 +34,41 @@
       playerDeck = userDB.GetUsingDeck();
     }
 
+    public int GetUnitCost(int _idx)
+    {
+      if (playerDeck == null)
+      {
+        playerDeck = userDB != null ? userDB.GetUsingDeck() : (userDB = DataBaseManager.Instance.GetDataBase<UserDB>()).GetUsingDeck();
+      }
+
+      //編成データからID取得
+      string headId = playerDeck.unitDataArray[_idx].headId;
+      string weponId = playerDeck.unitDataArray[_idx].weponId;
+      string legId = playerDeck.unitDataArray[_idx].legId;
+      string accId = playerDeck.unitDataArray[_idx].accessoryId;
+
+
+      if(masterPartsDB ==null)
+      masterPartsDB = DataBaseManager.Instance.GetDataBase<MasterPartsDB>();
+
+      int cost = masterPartsDB.GetData(headId).Cost + masterPartsDB.GetData(weponId).Cost + masterPartsDB.GetData(legId).Cost;
+
+      if(!string.IsNullOrEmpty(accId))
+      {
+        cost += masterPartsDB.GetData(accId).Cost;
+      }
+
+      return cost;
+    }
+
     public bool CheckUsingPlayerUnitData(int _idx)
     {
+      //無い場合は取得する
+      if (playerDeck == null)
+      {
+        playerDeck = userDB != null ? userDB.GetUsingDeck() : (userDB = DataBaseManager.Instance.GetDataBase<UserDB>()).GetUsingDeck();
+      }
+
       if (playerDeck.unitDataArray[_idx] == null)
       {
         return false;
@@ -44,8 +77,14 @@
       return playerDeck.unitDataArray[_idx].isUse;
     }
 
-    string GetPlayerUnitName(int _idx)
+    public string GetPlayerUnitName(int _idx)
     {
+      //無い場合は取得する
+      if (playerDeck == null)
+      {
+        playerDeck = userDB != null ? userDB.GetUsingDeck() : (userDB = DataBaseManager.Instance.GetDataBase<UserDB>()).GetUsingDeck();
+      }
+
       if (playerDeck.unitDataArray[_idx] == null)
       {
         return "NODATA";
@@ -106,9 +145,8 @@
       SetParam(param, headId, weponId, legId, accId);
 
       Shooter shooter = obj2.GetComponent<Shooter>();
-      shooter.Atk = rbase.GetComponent<RoboParam>().CurAtk;
-      shooter.Range = rbase.GetComponent<RoboParam>().Range;
-      shooter.Rapid = rbase.GetComponent<RoboParam>().CurRapid;
+
+      SetShooterData(shooter, param);
 
       return rbase;
     }
@@ -158,6 +196,8 @@
         ctper += baseAccessory.CtPer;
       }
 
+      SetWeponEffectData(_roboParam, _weponId);//武器の追加効果設定
+
       _roboParam.CtPer = (float)ctper / 100.0f;
       
       _roboParam.Resistance = baseHead.Resistance;
@@ -165,6 +205,83 @@
 
       _roboParam.Leg = GameCommon.ConvertLegTypeFromPartData(baseLeg.RoboAttribute);
       _roboParam.Shot = GameCommon.ConvertShotTypeFromPartData(baseWepon.RoboAttribute);
+    }
+
+    void SetWeponEffectData(RoboParam _roboParam,string _weponId)
+    {
+      RoboPartParam baseWepon = masterPartsDB.GetData(_weponId);
+
+      RoboParam.ShotEffectData shotEffectData;
+
+      shotEffectData.tType = baseWepon.EffectTType;
+      shotEffectData.vType = baseWepon.EffectVType;
+      shotEffectData.isBuf = false;
+      shotEffectData.paramType = RoboParam.ParamType.Max;
+
+      switch(baseWepon.EffectType)
+      {
+        case RoboPartParam.AddEffectType.BufAtk:
+          shotEffectData.isBuf = true;
+          shotEffectData.paramType = RoboParam.ParamType.Atk;
+          break;
+
+        case RoboPartParam.AddEffectType.BufDef:
+          shotEffectData.isBuf = true;
+          shotEffectData.paramType = RoboParam.ParamType.Def;
+          break;
+
+        case RoboPartParam.AddEffectType.BufHp:
+          shotEffectData.isBuf = true;
+          shotEffectData.paramType = RoboParam.ParamType.Hp;
+          break;
+
+        case RoboPartParam.AddEffectType.BufRapid:
+          shotEffectData.isBuf = true;
+          shotEffectData.paramType = RoboParam.ParamType.Rapid;
+          break;
+
+        case RoboPartParam.AddEffectType.BufSpd:
+          shotEffectData.isBuf = true;
+          shotEffectData.paramType = RoboParam.ParamType.Spd;
+          break;
+
+        case RoboPartParam.AddEffectType.DebufAtk:
+          shotEffectData.isBuf = false;
+          shotEffectData.paramType = RoboParam.ParamType.Atk;
+          break;
+
+        case RoboPartParam.AddEffectType.DebufDef:
+          shotEffectData.isBuf = false;
+          shotEffectData.paramType = RoboParam.ParamType.Def;
+          break;
+
+        case RoboPartParam.AddEffectType.DebufHp:
+          shotEffectData.isBuf = false;
+          shotEffectData.paramType = RoboParam.ParamType.Hp;
+          break;
+
+        case RoboPartParam.AddEffectType.DebufRapid:
+          shotEffectData.isBuf = false;
+          shotEffectData.paramType = RoboParam.ParamType.Rapid;
+          break;
+
+        case RoboPartParam.AddEffectType.DebufSpd:
+          shotEffectData.isBuf = false;
+          shotEffectData.paramType = RoboParam.ParamType.Spd;
+          break;
+      }
+
+      _roboParam.ShotEffect = shotEffectData;
+
+    }
+
+    void SetShooterData(Shooter _shooter,RoboParam _roboParam)
+    {
+      _shooter.Atk = _roboParam.CurAtk;
+      _shooter.Range = _roboParam.Range;
+      _shooter.Rapid = _roboParam.CurRapid;
+      _shooter.CtPer = _roboParam.CtPer;
+      _shooter.ShotEffect = _roboParam.ShotEffect;
     }
 
     GameObject Create(GameObject _prefab)
