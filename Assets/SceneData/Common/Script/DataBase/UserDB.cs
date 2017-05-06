@@ -122,6 +122,22 @@
       return deck;
     }
     //******************************************************
+    //GetDeck
+    //指定したデッキを取得
+    //******************************************************
+    public UserDataObject.OrganizationData GetDeck(int _deckId)
+    {
+      if (userData.deckDataArray != null)
+      {
+        return userData.deckDataArray[_deckId];
+      }
+      //データがないor不正なので
+      UserDataObject.OrganizationData[] deck = new UserDataObject.OrganizationData[3];
+
+      return deck[_deckId];
+    }
+
+    //******************************************************
     //GetUsingDeck
     //使用しているデッキを取得
     //******************************************************

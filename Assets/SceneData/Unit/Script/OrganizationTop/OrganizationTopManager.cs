@@ -3,14 +3,19 @@
   using System.Collections;
   using System.Collections.Generic;
   using UnityEngine;
+  using UnityEngine.UI;
   using Common;
   using Common.DataBase;
+  using UniRx.Triggers;
+  using UniRx;
 
   //編成トップのマネージャ
   public class OrganizationTopManager : MonoBehaviour
   {
     [SerializeField]
     DeckShow[] deckShowArray = new DeckShow[GameCommon.deckMax];
+    [SerializeField]
+    Button[] buttonArray = new Button[GameCommon.deckMax];
 
     UserDataObject.OrganizationData[] deckArray;
     // Use this for initialization
@@ -19,7 +24,7 @@
       //デッキロード
       var userDB = DataBaseManager.Instance.GetDataBase<UserDB>();
       deckArray = userDB.GetDeck();
-
+      #region DeckInit
       //デッキの状態を表示するためにデータをいれていく
       for(int i = 0; i < GameCommon.unitMax; i++)
       {
@@ -57,6 +62,20 @@
           deckShowArray[2].SetName(i, "Empty");
         }
 
+      }
+      #endregion
+
+      //ボタン動作セット　IDセットして遷移
+      for(int i = 0; i < GameCommon.deckMax; i++)
+      {
+        int idx = i;
+        buttonArray[i].OnClickAsObservable()
+          .Take(1)
+          .Subscribe(_ =>
+          {
+            UnitSelectManager.SelectDeckId = idx;
+            SceneChanger.Instance.ChangeScene("UnitSelect");
+          }).AddTo(gameObject);
       }
 
       SceneChanger.Instance.IsInitialize = true;
