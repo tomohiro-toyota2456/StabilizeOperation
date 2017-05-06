@@ -12,6 +12,7 @@
 
     //１デッキに使う最大ユニット数
     static public readonly int unitMax = 10;
+    static public readonly int deckMax = 3;
 
     static public readonly int maxExistUnit = 20;//
 
