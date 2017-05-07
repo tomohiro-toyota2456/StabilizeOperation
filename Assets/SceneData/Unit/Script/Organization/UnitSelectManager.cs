@@ -18,6 +18,8 @@
     ToggleFunctionManager toggleFunctionManager;
     [SerializeField]
     Button moveButton;
+    [SerializeField]
+    UnitModelViewer unitModelViewer;
 
     static int selectDeckId = -1;
     static int selectUnitId = -1;
@@ -83,18 +85,22 @@
       if(_idx == -1)
       {
         //非表示処理
+        unitModelViewer.Disable();
         return;
       }
 
       if(!deck.unitDataArray[_idx].isUse)
       {
         //非表示処理
-
+        unitModelViewer.Disable();
         return;
       }
 
       //表示処理
-
+      string head  = deck.unitDataArray[_idx].headId;
+      string wepon = deck.unitDataArray[_idx].weponId;
+      string leg   = deck.unitDataArray[_idx].legId;
+      unitModelViewer.View(head, wepon, leg);
     }
 
   }
